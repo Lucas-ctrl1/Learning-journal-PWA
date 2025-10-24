@@ -72,6 +72,11 @@ h3 {
     font-size: 1.3rem;
     margin: 1.5rem 0 0.5rem;
 }
+/* journal h3 font size */
+.entry-content h3 {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.5rem;
+}
 
 /* === LAYOUT USING GRID === */
 /* Project Grid Layout */

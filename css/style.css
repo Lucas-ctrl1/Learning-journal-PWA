@@ -105,6 +105,12 @@ h3 {
     line-height: 1.6;
 }
 
+/* Fix journal h3 font size */
+.entry-content h3 {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.5rem;
+}
+
 /* === CARDS WITH FLEXBOX === */
 .project-card {
     background: white;
@@ -122,7 +128,7 @@ h3 {
 
 /* === HIGHLIGHT KEY ELEMENTS === */
 .project-tech {
-    color: #e74c3c; /* Red accent color */
+    color: #666; /* Neutral gray */
     font-size: 0.9rem;
     margin: 0.5rem 0;
     font-style: italic;
@@ -139,19 +145,40 @@ h3 {
     align-self: flex-start;
 }
 
+/* Project links */
+.project-links {
+    margin: 1rem 0;
+}
+
+.project-links a {
+    display: inline-block;
+    background: #2c3e50;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-right: 0.5rem;
+    font-size: 0.8rem;
+    transition: background 0.3s;
+}
+
+.project-links a:hover {
+    background: #34495e;
+}
+
 /* === MOBILE-FIRST MEDIA QUERIES === */
 /* Tablet styles */
 @media (min-width: 768px) {
     .project-grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     nav ul {
         justify-content: flex-start;
         gap: 1rem;
         padding: 0 2rem;
     }
-    
+
     h1 {
         font-size: 3rem;
     }
@@ -200,6 +227,7 @@ h3 {
     transform: translateY(-5px);
     box-shadow: 0 5px 20px rgba(0,0,0,0.15);
 }
+
 /* Remove list dots and fix alignment */
 .skills ul {
     list-style: none;

@@ -12,9 +12,6 @@ body {
     color: #333; /* Basic text color */
 }
 
-p {
-    font-size: 1rem;
-}
 
 /* === LAYOUT USING FLEXBOX === */
 /* Navigation Flexbox */

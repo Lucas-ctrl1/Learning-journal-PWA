@@ -249,3 +249,22 @@ h3 {
     color: #666;
     font-weight: normal;
 }
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #ffffff;
+}
+
+body.dark-mode .journal-entry,
+body.dark-mode .project-card,
+body.dark-mode .profile,
+body.dark-mode .link-card {
+    background: #2d2d2d;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+}
+
+body.dark-mode nav {
+    background: #000000;
+}

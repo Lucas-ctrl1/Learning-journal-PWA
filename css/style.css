@@ -12,7 +12,6 @@ body {
     color: #333; /* Basic text color */
 }
 
-
 /* === LAYOUT USING FLEXBOX === */
 /* Navigation Flexbox */
 nav {
@@ -42,9 +41,6 @@ nav a:hover {
     background: #34495e;
 }
 
-/* add active state later with JavaScript */
-/* nav a.active { background: #e74c3c; } */
-
 /* === BASIC COLOURS, FONTS, AND SPACING === */
 .container {
     width: 90%;
@@ -73,6 +69,7 @@ h3 {
     font-size: 1.3rem;
     margin: 1.5rem 0 0.5rem;
 }
+
 .journal-entry .entry-content h3 {
     font-size: 1.1rem;
     margin: 1.5rem 0 0.5rem;
@@ -172,31 +169,6 @@ h3 {
     background: #34495e;
 }
 
-/* === MOBILE-FIRST MEDIA QUERIES === */
-/* Tablet styles */
-@media (min-width: 768px) {
-    .project-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    nav ul {
-        justify-content: flex-start;
-        gap: 1rem;
-        padding: 0 2rem;
-    }
-
-    h1 {
-        font-size: 3rem;
-    }
-}
-
-/* Desktop styles */
-@media (min-width: 1024px) {
-    .project-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
 /* === PROFILE FLEXBOX LAYOUT === */
 .profile {
     background: white;
@@ -250,7 +222,22 @@ h3 {
     font-weight: normal;
 }
 
-/* Dark Mode Styles */
+/* === DARK MODE TOGGLE BUTTON === */
+#dark-mode-toggle {
+    position: fixed;
+    top: 70px;
+    right: 10px;
+    z-index: 1000;
+    padding: 0.5rem;
+    background: #2c3e50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+}
+
+/* === DARK MODE STYLES === */
 body.dark-mode {
     background: #1a1a1a;
     color: #ffffff;
@@ -267,4 +254,43 @@ body.dark-mode .link-card {
 
 body.dark-mode nav {
     background: #000000;
+}
+
+body.dark-mode .project-tech {
+    color: #cccccc;
+}
+
+/* === MOBILE-FIRST MEDIA QUERIES === */
+/* Tablet styles */
+@media (min-width: 768px) {
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    nav ul {
+        justify-content: flex-start;
+        gap: 1rem;
+        padding: 0 2rem;
+    }
+
+    h1 {
+        font-size: 3rem;
+    }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+    .project-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* Mobile responsive for dark mode button */
+@media (max-width: 768px) {
+    #dark-mode-toggle {
+        top: 60px;
+        right: 5px;
+        font-size: 0.7rem;
+        padding: 0.4rem;
+    }
 }

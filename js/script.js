@@ -8,10 +8,9 @@ function loadNavigation() {
             <li><a href="journal.html">Journal</a></li>
             <li><a href="projects.html">Projects</a></li>
         </ul>
+        <button id="dark-mode-toggle"> Dark Mode</button>
     </nav>
     `;
-    
-    // Insert navigation at the start of body
     document.body.insertAdjacentHTML('afterbegin', navHTML);
 }
 

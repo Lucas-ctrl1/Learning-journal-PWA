@@ -45,5 +45,6 @@ function initDarkMode() {
 document.addEventListener('DOMContentLoaded', function() {
     loadNavigation();
     updateLiveDate();
+    initDarkMode();  // ← ADD THIS LINE!
     setInterval(updateLiveDate, 1000);
 });

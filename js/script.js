@@ -1,5 +1,10 @@
 // ===== REUSABLE NAVIGATION =====
 function loadNavigation() {
+    // Check if navigation already exists
+    if (document.querySelector('nav')) {
+        return;
+    }
+    
     const navHTML = `
     <nav>
         <ul>
@@ -8,9 +13,11 @@ function loadNavigation() {
             <li><a href="journal.html">Journal</a></li>
             <li><a href="projects.html">Projects</a></li>
         </ul>
-        <button id="dark-mode-toggle"> Dark Mode</button>
+        <button id="dark-mode-toggle">🌙 Dark Mode</button>
     </nav>
     `;
+    
+    // Insert navigation at the very beginning of body
     document.body.insertAdjacentHTML('afterbegin', navHTML);
 }
 
@@ -40,10 +47,42 @@ function initDarkMode() {
     }
 }
 
+// ===== HIGHLIGHT ACTIVE PAGE =====
+function highlightActivePage() {
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const navLinks = document.querySelectorAll('nav a');
+    
+    navLinks.forEach(link => {
+        const linkPage = link.getAttribute('href');
+        if (linkPage === currentPage) {
+            link.style.background = '#34495e';
+            link.style.fontWeight = 'bold';
+        }
+    });
+}
+
 // ===== INITIALIZE EVERYTHING =====
-document.addEventListener('DOMContentLoaded', function() {
+function initializeAll() {
+    console.log('Initializing navigation and features...');
+    
+    // Load navigation first
     loadNavigation();
+    
+    // Then highlight the active page
+    highlightActivePage();
+    
+    // Then initialize other features
     updateLiveDate();
-    initDarkMode();  // ← ADD THIS LINE!
+    initDarkMode();
+    
+    // Set up intervals
     setInterval(updateLiveDate, 1000);
-});
+}
+
+// Start initialization when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeAll);
+} else {
+    // DOM is already ready
+    initializeAll();
+}

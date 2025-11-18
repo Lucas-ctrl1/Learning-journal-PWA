@@ -1,0 +1,589 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    background: #f8f9fa;
+    color: #333;
+}
+
+/* === LAYOUT USING FLEXBOX === */
+nav {
+    background: #2c3e50;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background 0.3s;
+}
+
+nav a:hover {
+    background: #34495e;
+}
+
+/* Dark Mode Toggle */
+#dark-mode-toggle {
+    background: #34495e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+    margin-left: auto;
+    transition: background 0.3s;
+}
+
+#dark-mode-toggle:hover {
+    background: #4a6378;
+}
+
+/* === BASIC STYLES === */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 0;
+}
+
+h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+h2 {
+    color: #34495e;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    margin: 1.5rem 0 0.5rem;
+}
+
+.subtitle {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    text-align: center;
+}
+
+/* === JOURNAL ENTRIES === */
+.journal-entry {
+    background: white;
+    padding: 2rem;
+    margin: 2rem 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.entry-content p {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.entry-content h3 {
+    font-size: 1.1rem;
+    margin: 1.5rem 0 0.5rem;
+    font-weight: bold;
+}
+
+/* === LAB 4: JOURNAL FORM STYLES === */
+.journal-form {
+    margin-top: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e1e8ed;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+/* Entry Actions */
+.entry-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-copy, .btn-delete {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.btn-copy {
+    background: #27ae60;
+    color: white;
+}
+
+.btn-delete {
+    background: #e74c3c;
+    color: white;
+}
+
+.btn-copy:hover {
+    background: #219a52;
+    transform: translateY(-1px);
+}
+
+.btn-delete:hover {
+    background: #c0392b;
+    transform: translateY(-1px);
+}
+
+.entry-date {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.entry-tags {
+    color: #3498db;
+    font-style: italic;
+    margin: 0.5rem 0;
+}
+
+.no-entries {
+    text-align: center;
+    color: #7f8c8d;
+    font-style: italic;
+    padding: 2rem;
+}
+
+/* === YOUTUBE VIDEOS STYLES === */
+.youtube-container {
+    margin-top: 1rem;
+}
+
+.videos-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.video-card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.video-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Embedded Video Styles */
+.video-embed {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    margin-bottom: 1rem;
+}
+
+.video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    border: none;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.video-info {
+    padding: 1rem;
+}
+
+.video-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: #2c3e50;
+}
+
+.video-channel {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+}
+
+.video-date {
+    color: #888;
+    font-size: 0.8rem;
+    margin: 0.3rem 0;
+}
+
+.video-link {
+    display: inline-block;
+    background: #ff0000;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    transition: background 0.3s;
+}
+
+.video-link:hover {
+    background: #cc0000;
+}
+
+.video-note {
+    text-align: center;
+    margin-top: 1rem;
+    color: #666;
+}
+
+/* === NOTIFICATION TOAST STYLES === */
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+}
+
+/* === PROJECTS PAGE STYLES === */
+.project-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.project-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.project-card:hover {
+    transform: translateY(-3px);
+}
+
+.project-tech {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0.5rem 0;
+    font-style: italic;
+}
+
+.project-status {
+    display: inline-block;
+    background: #2c3e50;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.project-links {
+    margin: 1rem 0;
+}
+
+.project-links a {
+    display: inline-block;
+    background: #2c3e50;
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-right: 0.5rem;
+    font-size: 0.8rem;
+    transition: background 0.3s;
+}
+
+.project-links a:hover {
+    background: #34495e;
+}
+
+/* === HOMEPAGE STYLES === */
+.link-grid {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.link-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.link-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.profile {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.skills ul {
+    list-style: none;
+    padding: 0;
+}
+
+.skills li {
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.student-id {
+    margin: 0.2rem 0 1.5rem 0;
+    color: #666;
+    font-weight: normal;
+}
+
+/* === DARK MODE STYLES - COMPLETE FIX === */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #ffffff;
+}
+
+/* All text elements in dark mode */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode p,
+body.dark-mode span,
+body.dark-mode li,
+body.dark-mode .subtitle,
+body.dark-mode .student-id,
+body.dark-mode .entry-date,
+body.dark-mode .entry-tags,
+body.dark-mode .project-tech,
+body.dark-mode .video-channel,
+body.dark-mode .video-date,
+body.dark-mode .video-note,
+body.dark-mode .no-entries {
+    color: #ffffff !important;
+}
+
+/* Specific containers in dark mode */
+body.dark-mode .journal-entry,
+body.dark-mode .project-card,
+body.dark-mode .profile,
+body.dark-mode .link-card,
+body.dark-mode .video-card {
+    background: #2d2d2d;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(255,255,255,0.1);
+}
+
+body.dark-mode nav {
+    background: #000000;
+}
+
+/* Form elements in dark mode */
+body.dark-mode .form-group input,
+body.dark-mode .form-group textarea {
+    background: #2d2d2d;
+    border-color: #444;
+    color: white;
+}
+
+body.dark-mode .form-group label {
+    color: #ffffff;
+}
+
+/* Video specific dark mode */
+body.dark-mode .video-info h4 {
+    color: #ffffff;
+}
+
+/* Keep YouTube link visible */
+body.dark-mode .video-link {
+    color: white;
+    background: #ff0000;
+}
+
+/* Skills list in about page */
+body.dark-mode .skills li {
+    color: #ffffff;
+}
+
+/* Entry content in journal */
+body.dark-mode .entry-content p,
+body.dark-mode .entry-content h3 {
+    color: #ffffff;
+}
+
+/* Project links in dark mode */
+body.dark-mode .project-links a {
+    background: #34495e;
+    color: white;
+}
+
+body.dark-mode .project-links a:hover {
+    background: #4a6378;
+}
+
+/* Homepage link cards */
+body.dark-mode .link-card h3,
+body.dark-mode .link-card p {
+    color: #ffffff;
+}
+
+/* === MOBILE RESPONSIVE === */
+@media (min-width: 768px) {
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .videos-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .link-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    h1 {
+        font-size: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .project-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .videos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    nav {
+        padding: 1rem;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    nav ul {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    #dark-mode-toggle {
+        margin-left: 0;
+    }
+    
+    .form-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-primary {
+        width: 100%;
+    }
+    
+    .videos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .video-embed {
+        padding-bottom: 56.25%; /* Maintain 16:9 on mobile */
+    }
+}

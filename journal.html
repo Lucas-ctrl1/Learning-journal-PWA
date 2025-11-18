@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Journal - My Learning Journal</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+   <div class="container">
+        <h1>Learning Journal</h1>
+        <p class="subtitle">Documenting my journey through Mobile Application Development</p>
+
+        <div class="journal-entry">
+            <h2>Add New Journal Entry</h2>
+            <form id="journal-form" class="journal-form">
+                <div class="form-group">
+                    <label for="entry-title">Title:</label>
+                    <input type="text" id="entry-title" name="title" required placeholder="Enter entry title">
+                </div>
+                <div class="form-group">
+                    <label for="entry-content">Content:</label>
+                    <textarea id="entry-content" name="content" rows="5" required placeholder="Write your journal entry..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="entry-tags">Tags (comma separated):</label>
+                    <input type="text" id="entry-tags" name="tags" placeholder="e.g., JavaScript, API, Learning">
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn-primary">Save Entry</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="journal-entry">
+            <h2>Your Journal Entries</h2>
+            <div id="journal-entries">
+                </div>
+        </div>
+
+        <div class="journal-entry">
+            <h2>🎬 Programming Videos</h2>
+            <p>Related mobile development and programming videos from YouTube:</p>
+            <button id="load-videos-btn" class="btn-primary">Load Latest Videos</button>
+            <div id="youtube-videos" class="youtube-container">
+                </div>
+        </div>
+
+        <article class="journal-entry">
+            <h2>Week 4 - Introduction to APIs</h2>
+            
+            <div class="entry-content">
+                <h3>Which Storage, Browser, and Third-Party APIs did you choose, and why?</h3>
+                <p>I chose the following APIs to enhance my Learning Journal PWA:</p>
+                <ul>
+                    <li><strong>Storage API:</strong> I selected <strong>Local Storage</strong> because it provides a simple and persistent way to save data on the user's device. This was ideal for saving both the user's <strong>journal entries</strong> and their <strong>dark mode theme preference</strong> across browser sessions, fulfilling a core persistence requirement of the lab.</li>
+                    <li><strong>Browser API:</strong> I chose the <strong>Notifications API</strong> The Notifications API allows for providing <strong>asynchronous feedback</strong> (e.g., confirming an entry was saved or deleted) without interrupting the user's workflow.</li>
+                    <li><strong>Third-Party API:</strong> I integrated the <strong>YouTube Data API</strong> to display relevant programming and mobile development videos. This was chosen to integrate <strong>external educational content</strong> directly into the journal app, making it a more comprehensive learning resource.</li>
+                </ul>
+
+                <h3>How did you integrate each API with DOM manipulation?</h3>
+                <p>Each API required careful integration with the Document Object Model (DOM):</p>
+                <ul>
+                    <li><strong>Local Storage:</strong> Integration involves listening for the form <strong>submit event</strong>. Upon submission, data is read from the form elements, formatted, and saved using `storage.saveEntry()`. When the page loads, `JournalApp.loadEntries()` <strong>retrieves all data</strong> and dynamically generates new HTML `div` elements, inserting them into the `#journal-entries` container to display the saved content.</li>
+                    <li><strong>Browser APIs:</strong> The Notifications API is triggered via JavaScript calls to `browserAPI.showNotification()` after relevant user actions, ensuring the <strong>DOM remains clean</strong> while providing visual feedback. The Clipboard API is linked to the <strong>"Copy" buttons</strong> within each dynamically created entry, using an event listener to capture the entry's text content before calling `navigator.clipboard.writeText()`.</li>
+                    <li><strong>YouTube API:</strong> A button click event triggers `JournalApp.loadYouTubeVideos()`, which fetches the data asynchronously. The app then manipulates the DOM by clearing the `#youtube-videos` container and <strong>dynamically inserting HTML cards</strong> containing the video title, channel, and thumbnail/link.</li>
+                </ul>
+                
+                <h3>What challenges did you encounter, and how did you solve them?</h3>
+                <p>The two primary challenges were API reliability and user permissions:</p>
+                <ul>
+                    <li><strong>Third-Party API Reliability/Quota Limits:</strong> The YouTube Data API has strict usage quotas, which risked the feature breaking if the quota was exceeded. <strong>Solution:</strong> I implemented robust <strong>error handling (`try...catch`)</strong> and created a `getDefaultVideos()` <strong>fallback mechanism</strong> in `thirdparty.js`. If the live API call fails, the app still loads and displays mock video content, ensuring the application remains functional.</li>
+                    <li><strong>Notifications API Permissions:</strong> The browser requires explicit user permission to show notifications. <strong>Solution:</strong> I added a check in the `JournalApp.init()` method to gracefully <strong>request permission</strong> if it is still set to 'default', ensuring notifications only display after the user grants permission.</li>
+                </ul>
+                
+                <h3>In what ways do these APIs improve your Learning Journal PWA?</h3>
+                <p>The APIs dramatically improve the PWA in three key areas:</p>
+                <ul>
+                    <li><strong>Persistence & Reliability:</strong> Using Local Storage means the app no longer loses user data on reload or close, transforming it from a temporary tool into a <strong>reliable personal journal</strong>. The theme preference is also consistently loaded, improving the user experience.</li>
+                    <li><strong>User Feedback & Interactivity:</strong> The Notifications and Clipboard APIs enhance the application's responsiveness. The PWA now provides <strong>immediate, clear feedback</strong> on actions and offers a quick utility (copying entries) that improves workflow and efficiency.</li>
+                    <li><strong>Educational Value:</strong> The integration of the <strong>YouTube Data API</strong> turns the journal page into a <strong>contextual learning dashboard</strong>. By serving relevant programming videos, it supports the user's ongoing education directly within the application, enhancing its utility beyond simple note-taking.</li>
+                </ul>
+            </div>
+        </article>
+        
+        <article class="journal-entry">
+            <h2>Week 3 - JavaScript & DOM Manipulation</h2>
+            
+            <div class="entry-content">
+                <h3>Which DOM selection methods did you use, and why did you choose them?</h3>
+                <p>I used <strong>getElementById</strong> to target specific elements like the live date and dark mode toggle because it's fast and direct for single elements. I also used <strong>querySelector</strong> for more flexible element selection when needed.</p>
+                
+                <h3>What was the most challenging part about linking JavaScript with your HTML?</h3>
+                <p>The most challenging part was ensuring the JavaScript loaded at the right time using <strong>DOMContentLoaded</strong> and making the reusable navigation work consistently across all pages without manual HTML duplication. Getting the dark mode toggle positioned correctly without overlapping content was also tricky.</p>
+                
+                <h3>How did you test and debug your JavaScript code?</h3>
+                <p>I used <strong>console.log</strong> statements to check if elements were being selected properly and event listeners were working. I also used browser developer tools to test the dark mode CSS changes and fix positioning issues with the toggle button.</p>
+            </div>
+        </article>
+        
+        <article class="journal-entry">
+            <h2>Week 2 - Frontend Fundamentals</h2>
+            
+            <div class="entry-content">
+                <h3>How did you approach mobile-first design?</h3>
+                <p>I started with mobile styles first, then used CSS media queries with min-width to enhance layouts for tablets and desktop screens.</p>
+                
+                <h3>What was the most useful HTML or CSS concept you applied this week?</h3>
+                <p>CSS Flexbox for navigation and CSS Grid for project layouts were incredibly useful for responsive design.</p>
+                
+                <h3>What part of HTML or CSS did you find most challenging or confusing?</h3>
+                <p>Making navigation consistent across pages without JavaScript was manual. Looking forward to automating this with components.</p>
+            </div>
+        </article>
+        
+        <article class="journal-entry">
+            <h2>Week 1 - Introduction & PWA Foundations</h2>
+            
+            <div class="entry-content">
+                <h3>Key Achievements:</h3>
+                <p>Set up GitHub repository and VS Code integration. Built a Temperature Converter PWA with HTML, CSS, and JavaScript. Implemented core PWA features including web app manifest and service worker for offline functionality.</p>
+                
+                <h3>Multi-Platform Deployment:</h3>
+                <p>Deployed the PWA to both GitHub Pages and PythonAnywhere for cross-platform testing. Also created my first Android mobile application in Android Studio, comparing PWA vs native development approaches.</p>
+                
+                <h3>Reflection:</h3>
+                <p>Solid introduction to mobile development ecosystems. Experienced both web-based (PWA) and native (Android) development, understanding the strengths of each approach for different use cases.</p>
+            </div>
+        </article>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/browser.js"></script>
+    <script src="js/thirdparty.js"></script>
+    <script src="js/journal-app.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>

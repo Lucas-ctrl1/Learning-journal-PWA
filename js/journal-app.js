@@ -1,16 +1,16 @@
-// Main journal functionality for Lab 4
+// Main journal functionality for Lab 4 & Lab 5 (Python/JSON Integration)
 class JournalApp {
     constructor() {
         this.form = document.getElementById('journal-form');
         this.entriesContainer = document.getElementById('journal-entries');
         this.youtubeContainer = document.getElementById('youtube-videos');
-        // COMPLETELY REMOVE the loadVideosBtn line
+        // The loadVideosBtn line was previously removed
 
         this.init();
     }
 
-    init() {
-        this.loadEntries();
+    async init() { // MADE ASYNC
+        await this.loadEntries(); // ADDED AWAIT
         this.setupEventListeners();
         this.requestNotificationPermission();
         this.loadYouTubeVideos(); // Load videos automatically
@@ -20,7 +20,6 @@ class JournalApp {
         if (this.form) {
             this.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
         }
-        // COMPLETELY REMOVE the button event listener block
     }
 
     async handleFormSubmit(e) {
@@ -35,7 +34,8 @@ class JournalApp {
 
         // Validate required fields
         if (!entry.title.trim() || !entry.content.trim()) {
-            alert('Please fill in both title and content fields.');
+            // Note: browserAPI.showVisualFeedback is used instead of alert()
+            browserAPI.showVisualFeedback('Validation Error', 'Please fill in both title and content fields.');
             return;
         }
 
@@ -46,7 +46,7 @@ class JournalApp {
         await browserAPI.showNotification('Entry Saved!', `"${entry.title}" has been saved successfully`);
 
         // Reload entries
-        this.loadEntries();
+        await this.loadEntries(); // ADDED AWAIT
 
         // Reset form
         this.form.reset();
@@ -54,6 +54,74 @@ class JournalApp {
         console.log('Journal entry saved:', savedEntry);
     }
 
+    // NEW FUNCTION: Fetch reflections from the Python/JSON backend
+    async fetchJsonReflections() {
+        try {
+            // Path: /backend/reflections.json (relative to journal.html)
+            const response = await fetch("backend/reflections.json");
+            
+            if (!response.ok) {
+                console.warn('Could not fetch JSON reflections. Using Local Storage only.');
+                return []; 
+            }
+            
+            const jsonReflections = await response.json();
+            return jsonReflections;
+            
+        } catch (error) {
+            console.error('Error fetching JSON reflections:', error);
+            return [];
+        }
+    }
+
+    async loadEntries() { 
+        if (!this.entriesContainer) return;
+        
+        // 1. Get entries from Local Storage (your existing data)
+        const localStorageEntries = storage.getEntries();
+        
+        // 2. Get entries from JSON file (new data from Python)
+        const jsonReflections = await this.fetchJsonReflections();
+        
+        // 3. Combine and transform JSON reflections into journal entry format
+        const jsonEntries = jsonReflections.map(reflection => {
+            const reflectionDate = new Date(reflection.date); 
+            
+            return {
+                // Using date string as ID. This also flags it as a non-Local Storage entry.
+                id: reflection.date, 
+                title: "Python Reflection Entry", 
+                content: reflection.reflection,
+                date: reflectionDate.toLocaleDateString() + ' @ ' + reflectionDate.toLocaleTimeString(),
+                tags: ['python', 'json', 'backend']
+            };
+        });
+        
+        // Combine all entries
+        const combinedEntries = [...localStorageEntries, ...jsonEntries];
+        
+        // Sort by date (newest first)
+        combinedEntries.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+        
+        this.entriesContainer.innerHTML = '';
+
+        // --- LAB 5 EXTRA FEATURE: Reflection Counter (Cleaned Markup) ---
+        const reflectionCountDiv = document.createElement('div');
+        reflectionCountDiv.innerHTML = `<p class="subtitle">Total Backend JSON Reflections: <span id="reflection-count">${jsonReflections.length}</span></p>`;
+        this.entriesContainer.appendChild(reflectionCountDiv);
+        // --- END EXTRA FEATURE ---
+
+        if (combinedEntries.length === 0) {
+            this.entriesContainer.innerHTML += '<p class="no-entries">No journal entries yet. Create your first entry above!</p>';
+            return;
+        }
+
+        combinedEntries.forEach(entry => {
+            const entryElement = this.createEntryElement(entry);
+            this.entriesContainer.appendChild(entryElement);
+        });
+    }
+    
     // YouTube API Integration with EMBEDDED VIDEOS
     async loadYouTubeVideos() {
         if (!this.youtubeContainer) return;
@@ -99,50 +167,50 @@ class JournalApp {
             <p class="video-note"><small>Videos embedded using YouTube Data API</small></p>
         `;
     }
-
-    loadEntries() {
-        if (!this.entriesContainer) return;
-        
-        const entries = storage.getEntries();
-        this.entriesContainer.innerHTML = '';
-
-        if (entries.length === 0) {
-            this.entriesContainer.innerHTML = '<p class="no-entries">No journal entries yet. Create your first entry above!</p>';
-            return;
-        }
-
-        entries.forEach(entry => {
-            const entryElement = this.createEntryElement(entry);
-            this.entriesContainer.appendChild(entryElement);
-        });
-    }
-
+    
     createEntryElement(entry) {
         const entryDiv = document.createElement('div');
+        
+        // Check if the entry is from Local Storage (has a numeric ID) or JSON (has a string ID/date)
+        const isLocalStorage = typeof entry.id === 'number';
+
         entryDiv.className = 'journal-entry';
+        if (!isLocalStorage) {
+            entryDiv.classList.add('python-entry'); // Added unique class for styling
+        }
+        
         entryDiv.innerHTML = `
             <h3>${entry.title}</h3>
             <p class="entry-date">${entry.date}</p>
             <p class="entry-content">${entry.content}</p>
             ${entry.tags && entry.tags.length ? `<p class="entry-tags">Tags: ${entry.tags.join(', ')}</p>` : ''}
-            <div class="entry-actions">
-                <button class="btn-copy" data-content="${this.formatContentForCopy(entry)}">Copy</button>
-                <button class="btn-delete" data-id="${entry.id}">Delete</button>
-            </div>
+            
+            ${isLocalStorage ? `
+                <div class="entry-actions">
+                    <button class="btn-copy" data-content="${this.formatContentForCopy(entry)}">Copy</button>
+                    <button class="btn-delete" data-id="${entry.id}">Delete</button>
+                </div>
+            ` : `
+                <div class="entry-actions">
+                    <p class="python-label">Saved via Python Backend</p>
+                </div>
+            `}
         `;
 
-        // Add event listeners
-        entryDiv.querySelector('.btn-copy').addEventListener('click', (e) => {
-            const content = e.target.getAttribute('data-content');
-            browserAPI.copyToClipboard(content);
-        });
+        // Only attach listeners if it's a Local Storage entry
+        if (isLocalStorage) {
+            entryDiv.querySelector('.btn-copy').addEventListener('click', (e) => {
+                const content = e.target.getAttribute('data-content');
+                browserAPI.copyToClipboard(content);
+            });
 
-        entryDiv.querySelector('.btn-delete').addEventListener('click', (e) => {
-            const id = parseInt(e.target.getAttribute('data-id'));
-            storage.deleteEntry(id);
-            this.loadEntries();
-            browserAPI.showNotification('Entry Deleted', 'Journal entry has been removed');
-        });
+            entryDiv.querySelector('.btn-delete').addEventListener('click', (e) => {
+                const id = parseInt(e.target.getAttribute('data-id'));
+                storage.deleteEntry(id);
+                this.loadEntries();
+                browserAPI.showNotification('Entry Deleted', 'Journal entry has been removed');
+            });
+        }
 
         return entryDiv;
     }

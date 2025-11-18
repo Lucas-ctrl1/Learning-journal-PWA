@@ -1,1 +1,0 @@
-// JavaScript files will go here in Week 3

@@ -4,7 +4,7 @@ class JournalApp {
         this.form = document.getElementById('journal-form');
         this.entriesContainer = document.getElementById('journal-entries');
         this.youtubeContainer = document.getElementById('youtube-videos');
-        // COMPLETELY REMOVE the loadVideosBtn line
+        // The loadVideosBtn line was previously removed
 
         this.init();
     }
@@ -20,7 +20,6 @@ class JournalApp {
         if (this.form) {
             this.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
         }
-        // COMPLETELY REMOVE the button event listener block
     }
 
     async handleFormSubmit(e) {
@@ -35,7 +34,8 @@ class JournalApp {
 
         // Validate required fields
         if (!entry.title.trim() || !entry.content.trim()) {
-            alert('Please fill in both title and content fields.');
+            // Note: browserAPI.showVisualFeedback is used instead of alert()
+            browserAPI.showVisualFeedback('Validation Error', 'Please fill in both title and content fields.');
             return;
         }
 
@@ -74,7 +74,7 @@ class JournalApp {
         }
     }
 
-    async loadEntries() { // MADE ASYNC
+    async loadEntries() { 
         if (!this.entriesContainer) return;
         
         // 1. Get entries from Local Storage (your existing data)
@@ -88,7 +88,7 @@ class JournalApp {
             const reflectionDate = new Date(reflection.date); 
             
             return {
-                // Using date string as ID. Note: JSON entries are read-only on the PWA side.
+                // Using date string as ID. This also flags it as a non-Local Storage entry.
                 id: reflection.date, 
                 title: "Python Reflection Entry", 
                 content: reflection.reflection,
@@ -105,9 +105,9 @@ class JournalApp {
         
         this.entriesContainer.innerHTML = '';
 
-        // --- LAB 5 EXTRA FEATURE: Reflection Counter ---
+        // --- LAB 5 EXTRA FEATURE: Reflection Counter (Cleaned Markup) ---
         const reflectionCountDiv = document.createElement('div');
-        reflectionCountDiv.innerHTML = `<p class="subtitle">Total **Backend JSON Reflections**: <span id="reflection-count">${jsonReflections.length}</span></p>`;
+        reflectionCountDiv.innerHTML = `<p class="subtitle">Total Backend JSON Reflections: <span id="reflection-count">${jsonReflections.length}</span></p>`;
         this.entriesContainer.appendChild(reflectionCountDiv);
         // --- END EXTRA FEATURE ---
 
@@ -168,16 +168,17 @@ class JournalApp {
         `;
     }
     
-    // Note: The createEntryElement method should also be updated if you want to remove the 
-    // delete/copy buttons for JSON-saved entries, as they are not stored in Local Storage.
-    // However, keeping it simple for the lab requirements:
     createEntryElement(entry) {
         const entryDiv = document.createElement('div');
-        entryDiv.className = 'journal-entry';
         
         // Check if the entry is from Local Storage (has a numeric ID) or JSON (has a string ID/date)
         const isLocalStorage = typeof entry.id === 'number';
 
+        entryDiv.className = 'journal-entry';
+        if (!isLocalStorage) {
+            entryDiv.classList.add('python-entry'); // Added unique class for styling
+        }
+        
         entryDiv.innerHTML = `
             <h3>${entry.title}</h3>
             <p class="entry-date">${entry.date}</p>
@@ -191,7 +192,7 @@ class JournalApp {
                 </div>
             ` : `
                 <div class="entry-actions">
-                    <p style="color: #27ae60; font-size: 0.9rem;">(Saved via Python Backend)</p>
+                    <p class="python-label">Saved via Python Backend</p>
                 </div>
             `}
         `;

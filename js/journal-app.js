@@ -12,6 +12,7 @@ class JournalApp {
     async init() { // MADE ASYNC
         await this.loadEntries(); // ADDED AWAIT
         this.setupEventListeners();
+        this.setupExportButton(); // ADDED EXPORT BUTTON
         this.requestNotificationPermission();
         this.loadYouTubeVideos(); // Load videos automatically
     }
@@ -22,9 +23,49 @@ class JournalApp {
         }
     }
 
+    // ADDED: Setup export button
+    setupExportButton() {
+        const exportBtn = document.getElementById('export-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => this.exportAllEntries());
+        }
+    }
+
+    // ADDED: Export all entries method
+    async exportAllEntries() {
+        try {
+            const localStorageEntries = storage.getEntries();
+            const jsonReflections = await this.fetchJsonReflections();
+            
+            const allEntries = {
+                exportedAt: new Date().toISOString(),
+                totalEntries: localStorageEntries.length + jsonReflections.length,
+                localStorageEntries: localStorageEntries,
+                jsonReflections: jsonReflections
+            };
+            
+            const dataStr = JSON.stringify(allEntries, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            
+            const url = window.URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `journal-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            
+            await browserAPI.showNotification('Export Successful', `Exported ${allEntries.totalEntries} entries!`);
+        } catch (error) {
+            console.error('Export failed:', error);
+            browserAPI.showVisualFeedback('Export Failed', 'Could not export entries');
+        }
+    }
+
     async handleFormSubmit(e) {
         e.preventDefault();
-        
+
         const formData = new FormData(this.form);
         const entry = {
             title: formData.get('title'),
@@ -50,7 +91,7 @@ class JournalApp {
 
         // Reset form
         this.form.reset();
-        
+
         console.log('Journal entry saved:', savedEntry);
     }
 
@@ -59,15 +100,15 @@ class JournalApp {
         try {
             // Path: /backend/reflections.json (relative to journal.html)
             const response = await fetch("backend/reflections.json");
-            
+
             if (!response.ok) {
                 console.warn('Could not fetch JSON reflections. Using Local Storage only.');
                 return []; 
             }
-            
+
             const jsonReflections = await response.json();
             return jsonReflections;
-            
+
         } catch (error) {
             console.error('Error fetching JSON reflections:', error);
             return [];
@@ -76,17 +117,17 @@ class JournalApp {
 
     async loadEntries() { 
         if (!this.entriesContainer) return;
-        
+
         // 1. Get entries from Local Storage (your existing data)
         const localStorageEntries = storage.getEntries();
-        
+
         // 2. Get entries from JSON file (new data from Python)
         const jsonReflections = await this.fetchJsonReflections();
-        
+
         // 3. Combine and transform JSON reflections into journal entry format
         const jsonEntries = jsonReflections.map(reflection => {
             const reflectionDate = new Date(reflection.date); 
-            
+
             return {
                 // Using date string as ID. This also flags it as a non-Local Storage entry.
                 id: reflection.date, 
@@ -96,13 +137,13 @@ class JournalApp {
                 tags: ['python', 'json', 'backend']
             };
         });
-        
+
         // Combine all entries
         const combinedEntries = [...localStorageEntries, ...jsonEntries];
-        
+
         // Sort by date (newest first)
         combinedEntries.sort((a, b) => new Date(b.date) - new Date(a.date)); 
-        
+
         this.entriesContainer.innerHTML = '';
 
         // --- LAB 5 EXTRA FEATURE: Reflection Counter (Cleaned Markup) ---
@@ -121,18 +162,18 @@ class JournalApp {
             this.entriesContainer.appendChild(entryElement);
         });
     }
-    
+
     // YouTube API Integration with EMBEDDED VIDEOS
     async loadYouTubeVideos() {
         if (!this.youtubeContainer) return;
 
         try {
             this.youtubeContainer.innerHTML = '<p>Loading programming videos...</p>';
-            
+
             const videos = await youtubeAPI.searchVideos('mobile development programming', 3);
-            
+
             this.displayYouTubeVideos(videos);
-            
+
         } catch (error) {
             console.error('Failed to load videos:', error);
             this.youtubeContainer.innerHTML = '<p>Unable to load videos. Please try again later.</p>';
@@ -167,10 +208,10 @@ class JournalApp {
             <p class="video-note"><small>Videos embedded using YouTube Data API</small></p>
         `;
     }
-    
+
     createEntryElement(entry) {
         const entryDiv = document.createElement('div');
-        
+
         // Check if the entry is from Local Storage (has a numeric ID) or JSON (has a string ID/date)
         const isLocalStorage = typeof entry.id === 'number';
 
@@ -178,7 +219,7 @@ class JournalApp {
         if (!isLocalStorage) {
             entryDiv.classList.add('python-entry'); // Added unique class for styling
         }
-        
+
         entryDiv.innerHTML = `
             <h3>${entry.title}</h3>
             <p class="entry-date">${entry.date}</p>

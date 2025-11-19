@@ -38,6 +38,7 @@
             <div id="journal-entries">
                 </div>
         </div>
+        
 
         <div class="journal-entry">
             <h2>🎬 Programming Videos</h2>
@@ -46,6 +47,43 @@
             <div id="youtube-videos" class="youtube-container">
                 </div>
         </div>
+
+      <article class="journal-entry">
+    <h2>Week 5 - Python & JSON Backend Data</h2>
+    
+    <div class="entry-content">
+        
+        <h3>1. How is storing data in a JSON file different from using browser storage?</h3>
+        <ul>
+            <li>Location and Access: The JSON file is stored on the local machine's disk or server and can be modified by external programs (like the Python script). Browser storage (Local Storage) is managed entirely by client-side JavaScript within the user’s specific browser.</li>
+            <li>Scope: The JSON file provides data persistence outside the browser environment. Local Storage is tied to the browser origin and can be easily cleared by the user, making it less permanent for backend data.</li>
+            <li>Updatability: The JSON file is updated by a separate backend process (Python), whereas Local Storage is updated directly by the PWA’s JavaScript.</li>
+        </ul>
+
+        <h3>2. How did you use Python to create or update your JSON file?</h3>
+        <p>I used the Python script <code>save_entry.py</code>, combined with the built-in <code>json</code> and <code>os</code> modules for robust path handling.</p>
+        <ol>
+            <li>The script first used <code>os.path</code> logic to ensure it could find <code>reflections.json</code> reliably.</li>
+            <li>It used <code>json.load()</code> to read the existing list of reflections.</li>
+            <li>It took the user's reflection via <code>input()</code> and appended the new entry (with a timestamp) to the list.</li>
+            <li>Finally, it used <code>json.dump()</code> to save the complete, updated list back to the file, making the changes persistent on the disk.</li>
+        </ol>
+
+        <h3>3. What does your PWA show locally, and what will users see on GitHub? Are they the same? Why or why not?</h3>
+        <p>They are not the same.</p>
+        <ul>
+            <li>Locally: The PWA displays both entries saved to Local Storage and entries fetched dynamically from the Python-updated <code>reflections.json</code> file (via the local web server).</li>
+            <li>On GitHub Pages: Users only see entries saved to Local Storage. The <code>reflections.json</code> file is static; GitHub Pages cannot execute the Python script necessary to write new data to the file, meaning the data file is read-only and frozen at the last commit.</li>
+        </ul>
+
+        <h3>4. What extra feature did you add to your PWA using the JSON file, and why?</h3>
+        <p>I added a Reflection Counter and unique Visual Styling for Python-saved entries.</p>
+        <ul>
+            <li>Reflection Counter: This feature uses the length of the fetched JSON array (<code>jsonReflections.length</code>) to display the total number of entries saved by the Python backend. I chose this to provide immediate visual confirmation that the data fetch pipeline was successful.</li>
+            <li>Visual Styling: I added a distinct CSS class (<code>.python-entry</code>) to make the entries saved by Python stand out with a blue border and Python emoji (🐍) icon. This clearly separates the client-side data from the backend data source.</li>
+        </ul>
+    </div>
+</article>
 
         <article class="journal-entry">
             <h2>Week 4 - Introduction to APIs</h2>

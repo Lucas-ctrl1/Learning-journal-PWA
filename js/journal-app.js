@@ -91,7 +91,7 @@ class JournalApp {
                 // Using date string as ID. This also flags it as a non-Local Storage entry.
                 id: reflection.date, 
                 title: "Python Reflection Entry", 
-                content: reflection.reflection,
+                content: reflection.content || reflection.text || reflection.reflection,
                 date: reflectionDate.toLocaleDateString() + ' @ ' + reflectionDate.toLocaleTimeString(),
                 tags: ['python', 'json', 'backend']
             };

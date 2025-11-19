@@ -30,8 +30,4 @@ with open(DATA_FILE, 'w') as file:
     # Use indent=4 for human-readable formatting
     json.dump(reflections, file, indent=4)
 
-<<<<<<< HEAD
 print("Reflection saved successfully.")
-=======
-print("Reflection saved successfully.")
->>>>>>> 84f86000ebcdf74b93a96cb1be4ba8dbbee23371

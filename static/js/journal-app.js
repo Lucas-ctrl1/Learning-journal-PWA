@@ -18,7 +18,6 @@ class JournalApp {
 
     setupEventListeners() {
         if (this.form) {
-            // This event handler now contains logic for Flask submission and Local Storage fallback
             this.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
         }
     }
@@ -35,17 +34,17 @@ class JournalApp {
         try {
             const localStorageEntries = storage.getEntries();
             const jsonReflections = await this.fetchJsonReflections();
-            
+
             const allEntries = {
                 exportedAt: new Date().toISOString(),
                 totalEntries: localStorageEntries.length + jsonReflections.length,
                 localStorageEntries: localStorageEntries,
-                serverReflections: jsonReflections 
+                serverReflections: jsonReflections
             };
-            
+
             const dataStr = JSON.stringify(allEntries, null, 2);
             const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            
+
             const url = window.URL.createObjectURL(dataBlob);
             const link = document.createElement('a');
             link.href = url;
@@ -54,11 +53,30 @@ class JournalApp {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-            
+
             await browserAPI.showNotification('Export Successful', `Exported ${allEntries.totalEntries} entries!`);
         } catch (error) {
             console.error('Export failed:', error);
             browserAPI.showVisualFeedback('Export Failed', 'Could not export entries');
+        }
+    }
+
+    // --- DELETE FUNCTION FOR FLASK ENTRIES ---
+    async deleteFlaskReflection(index) {
+        try {
+            const response = await fetch(`/api/reflections/${index}`, {
+                method: 'DELETE'
+            });
+            
+            if (response.ok) {
+                await this.loadEntries(); // Refresh the entries
+                browserAPI.showNotification('Entry Deleted', 'Server entry has been removed');
+            } else {
+                alert('Error deleting entry from server');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            browserAPI.showVisualFeedback('Delete Failed', 'Could not delete from server');
         }
     }
 
@@ -78,7 +96,7 @@ class JournalApp {
 
         // Data payload structure that Flask expects
         const entry = { title, content, tags, reflection: content };
-        
+
         let savedSuccessfully = false;
 
         // 1. Try to save via Flask POST route
@@ -111,20 +129,19 @@ class JournalApp {
 
         this.form.reset();
     }
-    // --- END UPDATED POST LOGIC ---
 
     // --- UPDATED: Fetch reflections from the Flask GET route ---
     async fetchJsonReflections() {
         try {
             // URL now points to the Flask API endpoint
-            const response = await fetch("/api/reflections"); 
-            
+            const response = await fetch("/api/reflections");
+
             if (!response.ok) {
                 // If the Flask server is down or returns an error
                 console.warn('Could not fetch Flask reflections. Showing local data only.');
-                return []; 
+                return [];
             }
-            
+
             const jsonReflections = await response.json();
             return jsonReflections;
 
@@ -133,30 +150,29 @@ class JournalApp {
             return [];
         }
     }
-    // --- END UPDATED FETCH ---
 
-    async loadEntries() { 
+    async loadEntries() {
         if (!this.entriesContainer) return;
 
         const localStorageEntries = storage.getEntries();
         const jsonReflections = await this.fetchJsonReflections();
 
         // Map Flask/JSON data into PWA entry format
-        const jsonEntries = jsonReflections.map(reflection => {
+        const jsonEntries = jsonReflections.map((reflection, index) => {
             const reflectionDate = new Date(reflection.date); 
-            // Flask data is expected to have 'reflection' and 'date' fields
             return {
                 id: reflection.date, 
                 title: reflection.title || "Server Reflection Entry", 
                 content: reflection.reflection,
                 date: reflectionDate.toLocaleDateString() + ' @ ' + reflectionDate.toLocaleTimeString(),
-                tags: ['flask', 'backend', 'live']
+                tags: ['flask', 'backend', 'live'],
+                flaskIndex: index  // ADD THIS LINE - gives each Flask entry a unique index
             };
         });
 
         // Combine all entries and sort
         const combinedEntries = [...localStorageEntries, ...jsonEntries];
-        combinedEntries.sort((a, b) => new Date(b.date) - new Date(a.date)); 
+        combinedEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         this.entriesContainer.innerHTML = '';
 
@@ -186,7 +202,7 @@ class JournalApp {
             this.youtubeContainer.innerHTML = '<p>Loading programming videos...</p>';
 
             // Using mock data for reliable demonstration
-            const videos = await youtubeAPI.searchVideos('mobile development programming', 3); 
+            const videos = await youtubeAPI.searchVideos('mobile development programming', 3);
 
             this.displayYouTubeVideos(videos);
 
@@ -203,12 +219,12 @@ class JournalApp {
                 ${videos.map(video => `
                     <div class="video-card">
                         <div class="video-embed">
-                            <iframe 
-                                width="100%" 
-                                height="200" 
-                                src="${youtubeAPI.getEmbedUrl(video.id)}" 
-                                frameborder="0" 
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            <iframe
+                                width="100%"
+                                height="200"
+                                src="${youtubeAPI.getEmbedUrl(video.id)}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowfullscreen>
                             </iframe>
                         </div>
@@ -231,7 +247,7 @@ class JournalApp {
 
         entryDiv.className = 'journal-entry';
         if (!isLocalStorage) {
-            entryDiv.classList.add('python-entry'); // Uses python-entry class for server-saved data
+            entryDiv.classList.add('python-entry');
         }
 
         entryDiv.innerHTML = `
@@ -239,7 +255,7 @@ class JournalApp {
             <p class="entry-date">${entry.date}</p>
             <p class="entry-content">${entry.content}</p>
             ${entry.tags && entry.tags.length ? `<p class="entry-tags">Tags: ${entry.tags.join(', ')}</p>` : ''}
-            
+
             ${isLocalStorage ? `
                 <div class="entry-actions">
                     <button class="btn-copy" data-content="${this.formatContentForCopy(entry)}">Copy</button>
@@ -248,10 +264,12 @@ class JournalApp {
             ` : `
                 <div class="entry-actions">
                     <p class="python-label">Saved via Flask Backend</p>
+                    <button class="btn-delete-flask" data-index="${entry.flaskIndex}">Delete from Server</button>
                 </div>
             `}
         `;
 
+        // Add event listeners for Local Storage entries
         if (isLocalStorage) {
             entryDiv.querySelector('.btn-copy').addEventListener('click', (e) => {
                 const content = e.target.getAttribute('data-content');
@@ -263,6 +281,17 @@ class JournalApp {
                 storage.deleteEntry(id);
                 this.loadEntries();
                 browserAPI.showNotification('Entry Deleted', 'Journal entry has been removed');
+            });
+        }
+
+        // Add event listener for Flask entry delete buttons
+        const flaskDeleteBtn = entryDiv.querySelector('.btn-delete-flask');
+        if (flaskDeleteBtn) {
+            flaskDeleteBtn.addEventListener('click', async (e) => {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                if (confirm('Are you sure you want to delete this entry from the server?')) {
+                    await this.deleteFlaskReflection(index);
+                }
             });
         }
 

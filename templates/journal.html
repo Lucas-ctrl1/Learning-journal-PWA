@@ -82,11 +82,14 @@
         </ul>
 
         <h3>5. What extra feature did you build into your PWA with Flask, and why did you add it?</h3>
-        <p>The core feature built with Flask was a complete Live Data Saving and Retrieval System. I chose this as the extra feature because it fulfills the overarching goal of migrating the PWA into a true, interactive web application.</p>
+        <p>I built a <strong>Dual-Persistence System with Selective Deletion</strong> that goes beyond basic Flask requirements. While the core lab focused on server-side storage, I implemented:</p>
         <ul>
-            <li>This system demonstrates full client-server communication using the GET and POST API methods, proving the application can successfully persist user-generated data on a live server.</li>
-            <li>The Reflection Counter now confirms the number of entries successfully saved to the live Flask backend.</li>
+            <li><strong>Local Browser Storage</strong> for instant saves and offline capability</li>
+            <li><strong>Flask Server Storage</strong> for permanent cross-device persistence</li>
+            <li><strong>Independent Delete Functionality</strong> for both storage systems</li>
         </ul>
+        <p>This creates a robust, user-centric architecture where entries are saved in both systems simultaneously, but can be managed independently. Users can delete local entries without affecting server data, and vice versa, providing granular control and redundancy.</p>
+        <p>I added this because it demonstrates professional-grade data management - showing understanding of fallback strategies, user experience, and production-ready application design that exceeds basic CRUD operations.</p>
     </div>
 </article>
 
@@ -132,7 +135,6 @@
                 </ul>
             </div>
         </article>
-        <!-- Week 4, Week 3, Week 2, Week 1 entries remain here... -->
 
         <article class="journal-entry">
             <h2>Week 4 - Introduction to APIs</h2>
@@ -225,4 +227,3 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
-

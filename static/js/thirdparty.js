@@ -55,3 +55,72 @@ class YouTubeAPI {
 
 // Initialize YouTube API
 const youtubeAPI = new YouTubeAPI();
+
+// YouTube Video Loader - Automatically loads when page loads
+class YouTubeLoader {
+    constructor() {
+        this.container = document.getElementById('youtube-videos');
+        this.init();
+    }
+
+    async init() {
+        if (!this.container) return;
+        await this.loadVideos();
+    }
+
+    async loadVideos() {
+        try {
+            this.container.innerHTML = '<p>Loading programming videos...</p>';
+            const videos = await youtubeAPI.searchVideos('mobile development programming', 3);
+            this.displayVideos(videos);
+        } catch (error) {
+            console.error('Failed to load videos:', error);
+            this.container.innerHTML = '<p>Unable to load videos. Please try again later.</p>';
+        }
+    }
+
+    displayVideos(videos) {
+        this.container.innerHTML = `
+            <h3>🎬 Embedded Programming Videos</h3>
+            <div class="videos-grid">
+                ${videos.map(video => `
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe
+                                width="100%"
+                                height="200"
+                                src="${youtubeAPI.getEmbedUrl(video.id)}"
+                                frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen>
+                            </iframe>
+                        </div>
+                        <div class="video-info">
+                            <h4>${video.title}</h4>
+                            <p class="video-channel">${video.channel}</p>
+                            <p class="video-date">${video.publishedAt}</p>
+                            <a href="${youtubeAPI.getWatchUrl(video.id)}" target="_blank" class="video-link">Watch on YouTube</a>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            <p class="video-note"><small>Videos embedded using YouTube Data API</small></p>
+        `;
+    }
+
+    // Manual reload function
+    async reloadVideos() {
+        await this.loadVideos();
+    }
+}
+
+// Initialize YouTube loader when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new YouTubeLoader();
+});
+
+// Global function for manual reload (if needed)
+function reloadYouTubeVideos() {
+    const loader = new YouTubeLoader();
+    loader.reloadVideos();
+}

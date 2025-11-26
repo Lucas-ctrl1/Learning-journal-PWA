@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Learning Journal - Home</title>
-    <link rel="stylesheet" href="css/style.css">
+    <!-- CSS LINK UPDATED FOR FLASK -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
@@ -14,25 +15,29 @@
 <p id="live-date" style="text-align: center; color: #666; margin: 1rem 0;"></p>
             <p>This is my Progressive Web App that documents my growth through Mobile Application Development.</p>
         </header>
-        
+
         <section class="quick-links">
             <h2>Explore My Site</h2>
             <div class="link-grid">
-                <a href="about.html" class="link-card">
+                <!-- LINKS FIXED TO USE FLASK ROUTES -->
+                <a href="/about" class="link-card">
                     <h3>About Me</h3>
                     <p>Get to know who I am</p>
                 </a>
-                <a href="journal.html" class="link-card">
+                <a href="/journal" class="link-card">
                     <h3>Learning Journal</h3>
                     <p>Follow my weekly progress</p>
                 </a>
-                <a href="projects.html" class="link-card">
+                <a href="/projects" class="link-card">
                     <h3>Projects</h3>
                     <p>See my work portfolio</p>
                 </a>
             </div>
         </section>
     </div>
-<script src="js/script.js"></script>
+<!-- JAVASCRIPT LINK UPDATED FOR FLASK -->
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
+
+

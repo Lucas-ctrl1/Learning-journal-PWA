@@ -532,7 +532,7 @@ body.dark-mode .link-card p {
     background: #eaf6ff; /* Light blue/teal background */
     border-left: 6px solid #3498db; /* Clear blue left border */
     box-shadow: 0 1px 8px rgba(0, 100, 200, 0.1); /* Subtle shadow */
-    padding: 1.5rem 2rem; 
+    padding: 1.5rem 2rem;
 }
 
 /* Optional: Add a subtle Python icon/symbol to the title */
@@ -544,7 +544,7 @@ body.dark-mode .link-card p {
 
 /* Style for the 'Saved via Python Backend' text */
 .python-label {
-    color: #3498db; 
+    color: #3498db;
     font-size: 0.9rem;
     font-weight: bold;
     padding: 0.3rem 0;
@@ -556,7 +556,7 @@ body.dark-mode .python-entry {
     background: #1e3a47; /* Dark blue/teal background */
     border-left: 6px solid #00c7e2; /* Bright border for visibility */
     color: #ffffff;
-    box-shadow: 0 1px 8px rgba(0, 199, 226, 0.2); 
+    box-shadow: 0 1px 8px rgba(0, 199, 226, 0.2);
 }
 
 /* Ensure text inside dark mode python entry is white */
@@ -566,7 +566,7 @@ body.dark-mode .python-entry p {
 }
 
 body.dark-mode .python-entry .python-label {
-    color: #00c7e2; 
+    color: #00c7e2;
 }
 
 /* === MOBILE RESPONSIVE === */
@@ -770,4 +770,19 @@ body.dark-mode .reflection-counter .subtitle {
 
 body.dark-mode #reflection-count {
     color: #ff6b6b;
-    }
+}
+
+.btn-delete-flask {
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.btn-delete-flask:hover {
+    background: #ff5252;
+}

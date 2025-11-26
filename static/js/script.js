@@ -1,17 +1,18 @@
-// ===== REUSABLE NAVIGATION =====
+// ===== REUSABLE NAVIGATION (UPDATED FOR FLASK ROUTES) =====
 function loadNavigation() {
     // Check if navigation already exists
     if (document.querySelector('nav')) {
         return;
     }
     
+    // NOTE: Links are updated to use Flask routes (e.g., /journal) for navigation
     const navHTML = `
     <nav>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="journal.html">Journal</a></li>
-            <li><a href="projects.html">Projects</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/journal">Journal</a></li>
+            <li><a href="/projects">Projects</a></li>
         </ul>
         <button id="dark-mode-toggle">🌙 Dark Mode</button>
     </nav>
@@ -47,16 +48,27 @@ function initDarkMode() {
     }
 }
 
-// ===== HIGHLIGHT ACTIVE PAGE =====
+// ===== HIGHLIGHT ACTIVE PAGE (UPDATED FOR FLASK ROUTES) =====
 function highlightActivePage() {
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    // Get the current path (e.g., '/', '/journal', '/about')
+    let currentPath = window.location.pathname.replace(/\/$/, '');
+    if (currentPath === '') {
+        currentPath = '/'; // Ensure homepage is correctly detected
+    }
+
     const navLinks = document.querySelectorAll('nav a');
     
     navLinks.forEach(link => {
-        const linkPage = link.getAttribute('href');
-        if (linkPage === currentPage) {
+        const linkHref = link.getAttribute('href');
+        
+        // Check if the link href matches the current path exactly
+        if (linkHref === currentPath) {
             link.style.background = '#34495e';
             link.style.fontWeight = 'bold';
+        } else if (linkHref === '/' && currentPath.includes('index')) {
+             // Handle case where index page might be accessed via /index
+             link.style.background = '#34495e';
+             link.style.fontWeight = 'bold';
         }
     });
 }

@@ -31,9 +31,9 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 | Platform | URL | Status |
 |----------|-----|---------|
 | **PythonAnywhere** (Flask Backend) | [https://lucas221.pythonanywhere.com](https://lucas221.pythonanywhere.com) | ✅ **Live** |
-| **GitHub Pages** (Static Version) | [https://lucas-ctrl1.github.io/Learning-journal-PWA](https://lucas-ctrl1.github.io/Learning-journal-PWA) | ✅ **Live** |
+| **GitHub Pages** (Static Version) | https://github.com/Lucas-ctrl1/Learning-journal-PWA) | ✅ **Live** |
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 ### Frontend
 - **HTML5** - Semantic markup

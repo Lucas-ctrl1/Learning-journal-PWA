@@ -1,29 +1,28 @@
-// Main journal functionality for Lab 4 & Lab 5 (Python/JSON Integration)
+// Main journal functionality for Lab 6 (Flask Backend Integration)
 class JournalApp {
     constructor() {
         this.form = document.getElementById('journal-form');
         this.entriesContainer = document.getElementById('journal-entries');
         this.youtubeContainer = document.getElementById('youtube-videos');
-        // The loadVideosBtn line was previously removed
 
         this.init();
     }
 
-    async init() { // MADE ASYNC
-        await this.loadEntries(); // ADDED AWAIT
+    async init() {
+        await this.loadEntries();
         this.setupEventListeners();
-        this.setupExportButton(); // ADDED EXPORT BUTTON
+        this.setupExportButton();
         this.requestNotificationPermission();
-        this.loadYouTubeVideos(); // Load videos automatically
+        this.loadYouTubeVideos();
     }
 
     setupEventListeners() {
         if (this.form) {
+            // This event handler now contains logic for Flask submission and Local Storage fallback
             this.form.addEventListener('submit', (e) => this.handleFormSubmit(e));
         }
     }
 
-    // ADDED: Setup export button
     setupExportButton() {
         const exportBtn = document.getElementById('export-btn');
         if (exportBtn) {
@@ -31,7 +30,7 @@ class JournalApp {
         }
     }
 
-    // ADDED: Export all entries method
+    // ADDED: Export all entries method (from Lab 5)
     async exportAllEntries() {
         try {
             const localStorageEntries = storage.getEntries();
@@ -41,7 +40,7 @@ class JournalApp {
                 exportedAt: new Date().toISOString(),
                 totalEntries: localStorageEntries.length + jsonReflections.length,
                 localStorageEntries: localStorageEntries,
-                jsonReflections: jsonReflections
+                serverReflections: jsonReflections 
             };
             
             const dataStr = JSON.stringify(allEntries, null, 2);
@@ -63,94 +62,110 @@ class JournalApp {
         }
     }
 
+    // --- UPDATED: Handle form submission via Flask POST route ---
     async handleFormSubmit(e) {
         e.preventDefault();
 
         const formData = new FormData(this.form);
-        const entry = {
-            title: formData.get('title'),
-            content: formData.get('content'),
-            tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag)
-        };
+        const title = formData.get('title');
+        const content = formData.get('content');
+        const tags = formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag);
 
-        // Validate required fields
-        if (!entry.title.trim() || !entry.content.trim()) {
-            // Note: browserAPI.showVisualFeedback is used instead of alert()
+        if (!title.trim() || !content.trim()) {
             browserAPI.showVisualFeedback('Validation Error', 'Please fill in both title and content fields.');
             return;
         }
 
-        // Save to local storage
+        // Data payload structure that Flask expects
+        const entry = { title, content, tags, reflection: content };
+        
+        let savedSuccessfully = false;
+
+        // 1. Try to save via Flask POST route
+        try {
+            const response = await fetch("/api/reflections", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(entry)
+            });
+
+            if (response.ok && response.status === 201) {
+                // Flask saved successfully
+                savedSuccessfully = true;
+                browserAPI.showNotification('Entry Saved (Flask)!', `"${title}" saved to server.`);
+            } else {
+                 console.warn("Flask POST failed. Server returned non-201 status.", await response.text());
+            }
+        } catch (error) {
+            console.error("Flask API call failed:", error);
+        }
+
+        // 2. Always save a copy locally (fallback)
         const savedEntry = storage.saveEntry(entry);
+        if (!savedSuccessfully) {
+            browserAPI.showNotification('Entry Saved (Local)!', `"${title}" saved locally only.`);
+        }
 
-        // Show success notification
-        await browserAPI.showNotification('Entry Saved!', `"${entry.title}" has been saved successfully`);
+        // Reload entries to see the new server data
+        await this.loadEntries();
 
-        // Reload entries
-        await this.loadEntries(); // ADDED AWAIT
-
-        // Reset form
         this.form.reset();
-
-        console.log('Journal entry saved:', savedEntry);
     }
+    // --- END UPDATED POST LOGIC ---
 
-    // NEW FUNCTION: Fetch reflections from the Python/JSON backend
+    // --- UPDATED: Fetch reflections from the Flask GET route ---
     async fetchJsonReflections() {
         try {
-            // Path: /backend/reflections.json (relative to journal.html)
-            const response = await fetch("backend/reflections.json");
-
+            // URL now points to the Flask API endpoint
+            const response = await fetch("/api/reflections"); 
+            
             if (!response.ok) {
-                console.warn('Could not fetch JSON reflections. Using Local Storage only.');
+                // If the Flask server is down or returns an error
+                console.warn('Could not fetch Flask reflections. Showing local data only.');
                 return []; 
             }
-
+            
             const jsonReflections = await response.json();
             return jsonReflections;
 
         } catch (error) {
-            console.error('Error fetching JSON reflections:', error);
+            console.error('Error fetching Flask reflections:', error);
             return [];
         }
     }
+    // --- END UPDATED FETCH ---
 
     async loadEntries() { 
         if (!this.entriesContainer) return;
 
-        // 1. Get entries from Local Storage (your existing data)
         const localStorageEntries = storage.getEntries();
-
-        // 2. Get entries from JSON file (new data from Python)
         const jsonReflections = await this.fetchJsonReflections();
 
-        // 3. Combine and transform JSON reflections into journal entry format
+        // Map Flask/JSON data into PWA entry format
         const jsonEntries = jsonReflections.map(reflection => {
             const reflectionDate = new Date(reflection.date); 
-
+            // Flask data is expected to have 'reflection' and 'date' fields
             return {
-                // Using date string as ID. This also flags it as a non-Local Storage entry.
                 id: reflection.date, 
-                title: "Python Reflection Entry", 
-                content: reflection.content || reflection.text || reflection.reflection,
+                title: reflection.title || "Server Reflection Entry", 
+                content: reflection.reflection,
                 date: reflectionDate.toLocaleDateString() + ' @ ' + reflectionDate.toLocaleTimeString(),
-                tags: ['python', 'json', 'backend']
+                tags: ['flask', 'backend', 'live']
             };
         });
 
-        // Combine all entries
+        // Combine all entries and sort
         const combinedEntries = [...localStorageEntries, ...jsonEntries];
-
-        // Sort by date (newest first)
         combinedEntries.sort((a, b) => new Date(b.date) - new Date(a.date)); 
 
         this.entriesContainer.innerHTML = '';
 
-        // --- LAB 5 EXTRA FEATURE: Reflection Counter (Cleaned Markup) ---
+        // --- REFLECTION COUNTER ---
         const reflectionCountDiv = document.createElement('div');
-        reflectionCountDiv.innerHTML = `<p class="subtitle">Total Backend JSON Reflections: <span id="reflection-count">${jsonReflections.length}</span></p>`;
+        reflectionCountDiv.classList.add('reflection-counter');
+        reflectionCountDiv.innerHTML = `<p class="subtitle">Total Server Reflections: <span id="reflection-count">${jsonReflections.length}</span></p>`;
         this.entriesContainer.appendChild(reflectionCountDiv);
-        // --- END EXTRA FEATURE ---
+        // --- END COUNTER ---
 
         if (combinedEntries.length === 0) {
             this.entriesContainer.innerHTML += '<p class="no-entries">No journal entries yet. Create your first entry above!</p>';
@@ -170,7 +185,8 @@ class JournalApp {
         try {
             this.youtubeContainer.innerHTML = '<p>Loading programming videos...</p>';
 
-            const videos = await youtubeAPI.searchVideos('mobile development programming', 3);
+            // Using mock data for reliable demonstration
+            const videos = await youtubeAPI.searchVideos('mobile development programming', 3); 
 
             this.displayYouTubeVideos(videos);
 
@@ -190,7 +206,7 @@ class JournalApp {
                             <iframe 
                                 width="100%" 
                                 height="200" 
-                                src="https://www.youtube.com/embed/${video.id}" 
+                                src="${youtubeAPI.getEmbedUrl(video.id)}" 
                                 frameborder="0" 
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                 allowfullscreen>
@@ -211,13 +227,11 @@ class JournalApp {
 
     createEntryElement(entry) {
         const entryDiv = document.createElement('div');
-
-        // Check if the entry is from Local Storage (has a numeric ID) or JSON (has a string ID/date)
         const isLocalStorage = typeof entry.id === 'number';
 
         entryDiv.className = 'journal-entry';
         if (!isLocalStorage) {
-            entryDiv.classList.add('python-entry'); // Added unique class for styling
+            entryDiv.classList.add('python-entry'); // Uses python-entry class for server-saved data
         }
 
         entryDiv.innerHTML = `
@@ -233,12 +247,11 @@ class JournalApp {
                 </div>
             ` : `
                 <div class="entry-actions">
-                    <p class="python-label">Saved via Python Backend</p>
+                    <p class="python-label">Saved via Flask Backend</p>
                 </div>
             `}
         `;
 
-        // Only attach listeners if it's a Local Storage entry
         if (isLocalStorage) {
             entryDiv.querySelector('.btn-copy').addEventListener('click', (e) => {
                 const content = e.target.getAttribute('data-content');

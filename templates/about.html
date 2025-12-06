@@ -4,24 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About Me - My Learning Journal</title>
-    <!-- CSS LINK UPDATED FOR FLASK -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <div class="container">
         <h1>About Me</h1>
-        
+
         <div class="profile">
             <div class="profile-image">
-                <!-- Add your image-->
                 <div class="placeholder-image">👨‍💻</div>
             </div>
             <div class="profile-info">
                 <h2>Lucas Shrestha</h2>
                 <p class="student-id">Student ID: 2317991</p>
                 <p>Passionate about mobile development, creative technology, and building solutions that make a difference. Currently exploring the world of Progressive Web Apps and frontend development.</p>
-                
+
                 <div class="skills">
                     <h3>Skills & Interests</h3>
                     <ul>
@@ -35,8 +34,6 @@
             </div>
         </div>
     </div>
-<!-- JAVASCRIPT LINK UPDATED FOR FLASK -->
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
-

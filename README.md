@@ -54,27 +54,7 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 ```
 
 Learning-journal-PWA/
-├──templates/                 # Flask HTML templates
-│├── index.html            # Homepage
-│├── journal.html          # Journal entries page
-│├── projects.html         # Projects showcase
-│└── about.html            # About page
-├──static/
-│├── css/
-││   └── style.css         # Main stylesheet
-│├── js/
-││   ├── journal-app.js    # Main application logic
-││   ├── storage.js        # Local storage management
-││   ├── browser.js        # Browser APIs
-││   ├── thirdparty.js     # YouTube API integration
-││   └── script.js         # Utility functions
-│├── images/               # Assets and icons
-│└── backend/
-│└── reflections.json  # Server data storage
-├──flask_app.py              # Flask backend server
-├──manifest.json             # PWA manifest
-├──service-worker.js         # Service worker for offline
-└──README.md                 # This file
+
 
 ```
 
@@ -95,7 +75,43 @@ This project evolved through multiple labs, each adding sophisticated features:
 - **Reflection counter** - Live entry statistics
 - **Multi-platform compatibility** - GitHub Pages + Local
 
-### 🌐 Lab 4 - API Integration
+```
+##Learning-journal-PWA/
+│
+├── flask_app.py              # 🐍 Main Flask Server (Entry Point)
+├── README.md                 # Project Documentation
+├── save_entry.py             # Local Python script for testing
+│
+├── templates/                # 📄 HTML Templates (Rendered by Flask)
+│   ├── index.html            # Home Page
+│   ├── journal.html          # Journal Page (main app logic)
+│   ├── projects.html         # Portfolio Page
+│   └── about.html            # Profile Page
+│
+└── static/                   # 🎨 Static Assets (Served to Browser)
+    │
+    ├── manifest.json         # 📱 PWA Manifest (App Metadata)
+    │
+    ├── css/
+    │   └── style.css         # Main Stylesheet (with Dark Mode & Offline styles)
+    │
+    ├── js/
+    │   ├── service-worker.js # ⚙️ Service Worker (Cache & Offline Logic)
+    │   ├── script.js         # Main UI Logic (Nav, Toast, Heartbeat)
+    │   ├── journal-app.js    # Journal Entry Logic (Fetch & DOM)
+    │   ├── storage.js        # Local Storage Helper
+    │   ├── browser.js        # Notification/Clipboard Helper
+    │   └── thirdparty.js     # YouTube API Helper
+    │
+    ├── images/
+    │   ├── icon-192.jpg      # 🖼️ Mobile Icon (Small)
+    │   └── icon-512.png      # 🖼️ Desktop Icon (Large)
+    │
+    └── backend/
+        └── reflections.json  # 💾 JSON Database (Server-side storage)
+```
+
+# 🌐 Lab 4 - API Integration
 - **Local Storage API** - Persistent client-side storage
 - **Notifications API** - User feedback system
 - **Clipboard API** - One-click content copying

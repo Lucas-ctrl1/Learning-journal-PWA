@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects - My Learning Journal</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <!-- CSS LINK MUST USE FLASK SYNTAX -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -12,6 +13,17 @@
     <div class="container">
         <h1>My Projects</h1>
         <p class="subtitle">A showcase of my work throughout the learning weeks of Mobile Application Development</p>
+
+<div class="project-card">
+    <h3>Learning Journal PWA - Lab 7</h3>
+    <p class="project-tech">Service Worker • Manifest • Offline Support • Cache API</p>
+    <p>Upgraded the application into a full Progressive Web App. Implemented a Service Worker for offline caching of both static assets and dynamic Flask API data. Configured the Web App Manifest for installability and added a "Heartbeat" offline detection system.</p>
+    <div class="project-links">
+        <a href="https://github.com/Lucas-ctrl1/Learning-journal-PWA" target="_blank">GitHub Repo</a>
+        <a href="https://lucas221.pythonanywhere.com/" target="_blank">Live Demo</a>
+    </div>
+    <div class="project-status">Completed</div>
+</div>
 
         <!-- Lab 6 Project (NEW ENTRY) -->
 <div class="project-card">

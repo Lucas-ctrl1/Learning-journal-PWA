@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Learning Journal - My Learning Journal</title>
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <!-- CSS LINK UPDATED FOR FLASK -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -54,6 +55,34 @@
             <div id="youtube-videos" class="youtube-container">
                 </div>
         </div>
+
+        <article class="journal-entry">
+    <h2>Week 7 - PWA & Offline Capabilities</h2>
+
+    <div class="entry-content">
+
+        <h3>1. Why is it useful to enhance your Flask app with PWA features?</h3>
+        <p>Enhancing the Flask app with PWA features transforms it from a simple website into a reliable, app-like experience. By adding a Service Worker and Manifest, the app becomes installable on the user's home screen and works regardless of network status. This improves user engagement and reliability, bridging the gap between the reach of the web and the capabilities of native mobile apps.</p>
+
+        <h3>2. What did you use to support offline access and dynamic data?</h3>
+        <p>I used the <strong>Service Worker API</strong> acting as a network proxy to manage caching.</p>
+        <ul>
+            <li><strong>Static Assets:</strong> I used the <strong>install</strong> event to cache core files (HTML, CSS, JS) so the app shell loads instantly.</li>
+            <li><strong>Dynamic Data:</strong> I implemented a "Stale-While-Revalidate" strategy for the <strong>/api/reflections</strong> route. This serves cached JSON data immediately if the user is offline, ensuring they can still read their journal entries without an internet connection.</li>
+        </ul>
+
+        <h3>3. What extra feature did you add, and why?</h3>
+        <p>I implemented a <strong>Robust Offline Detection System</strong> with a "Heartbeat" monitor. While standard browser events detect when connection is lost, they can be glitchy on mobile. I added a <strong>setInterval</strong> check that pings the network status every 3 seconds. If the user goes offline, a Red Toast Notification appears, and the UI turns grayscale. I added this to provide clear, immediate visual feedback so the user knows why the app isn't syncing.</p>
+
+        <h3>4. Did you face any challenges deploying your PWA, and how did you solve them?</h3>
+        <p>Yes, I faced two main challenges:</p>
+        <ul>
+            <li><strong>Manifest Mismatch:</strong> The "Install" button wouldn't appear on my phone. I discovered my icon was a <strong>.jpg</strong> but my code expected a <strong>.png</strong>. Fixing the MIME type in <strong>manifest.json</strong> solved this.</li>
+            <li><strong>Script Caching Issues:</strong> My navigation bar disappeared on the "About" page while offline. I realized I had a syntax error (missing quote) in the script tag in <strong>about.html</strong>, and the Service Worker was caching the broken version. I fixed the typo and bumped the Service Worker version to force a cache refresh, which brought the menu back.</li>
+        </ul>
+    </div>
+</article>
+
 
         <!-- WEEK 6 - FLASK BACKEND INTEGRATION (NEW ENTRY) -->
 <article class="journal-entry">
@@ -189,41 +218,4 @@
         </article>
 
         <article class="journal-entry">
-            <h2>Week 2 - Frontend Fundamentals</h2>
-
-            <div class="entry-content">
-                <h3>How did you approach mobile-first design?</h3>
-                <p>I started with mobile styles first, then used CSS media queries with min-width to enhance layouts for tablets and desktop screens.</p>
-
-                <h3>What was the most useful HTML or CSS concept you applied this week?</h3>
-                <p>CSS Flexbox for navigation and CSS Grid for project layouts were incredibly useful for responsive design.</p>
-
-                <h3>What part of HTML or CSS did you find most challenging or confusing?</h3>
-                <p>Making navigation consistent across pages without JavaScript was manual. Looking forward to automating this with components.</p>
-            </div>
-        </article>
-
-        <article class="journal-entry">
-            <h2>Week 1 - Introduction & PWA Foundations</h2>
-
-            <div class="entry-content">
-                <h3>Key Achievements:</h3>
-                <p>Set up GitHub repository and VS Code integration. Built a Temperature Converter PWA with HTML, CSS, and JavaScript. Implemented core PWA features including web app manifest and service worker for offline functionality.</p>
-
-                <h3>Multi-Platform Deployment:</h3>
-                <p>Deployed the PWA to both GitHub Pages and PythonAnywhere for cross-platform testing. Also created my first Android mobile application in Android Studio, comparing PWA vs native development approaches.</p>
-
-                <h3>Reflection:</h3>
-                <p>Solid introduction to mobile development ecosystems. Experienced both web-based (PWA) and native (Android) development, understanding the strengths of each approach for different use cases.</p>
-            </div>
-        </article>
-    </div>
-
-    <!-- JAVASCRIPT LINKS UPDATED FOR FLASK -->
-    <script src="{{ url_for('static', filename='js/storage.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/browser.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/thirdparty.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/journal-app.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-</body>
-</html>
+     

@@ -786,3 +786,13 @@ body.dark-mode #reflection-count {
 .btn-delete-flask:hover {
     background: #ff5252;
 }
+/* === EXTRA FEATURE: Visual Offline Mode (Lab 7) === */
+/* Using !important to force the browser to apply it */
+.container.offline-mode {
+        filter: grayscale(100%) !important;
+        transition: filter 0.5s ease;
+}
+/* Animation for the Javascript Toast */
+@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-20px); }
+}

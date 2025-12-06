@@ -57,7 +57,6 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 │
 ├── flask_app.py              # 🐍 Main Flask Server (Entry Point)
 ├── README.md                 # Project Documentation
-├── save_entry.py             # Local Python script for testing
 │
 ├── templates/                # 📄 HTML Templates (Rendered by Flask)
 │   ├── index.html            # Home Page

@@ -94,6 +94,13 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 
 This project evolved through multiple labs, each adding sophisticated features:
 
+### 📱 Lab 7 - PWA & Offline Capabilities
+- **Service Worker Implementation** - Custom caching logic for full offline access and reliability
+- **Web App Manifest** - Configured for installability on mobile devices with custom icons and theme colors
+- **Dynamic API Caching** - "Stale-While-Revalidate" strategy for viewing journal entries without internet
+- **Robust Offline Detection** - "Heartbeat" monitor with visual grayscale mode and toast notifications
+- **Cache Management** - Implemented versioning strategy to force updates on client devices
+  
 ### 🏆 Lab 6 - Flask Backend & Deployment
 - **Flask REST API** with GET/POST/DELETE endpoints
 - **Dual-Persistence System** - Local + Server storage

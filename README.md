@@ -53,29 +53,6 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 ## 📁 Project Structure
 ```
 
-Learning-journal-PWA/
-
-
-```
-
-## 🎓 Learning Journey
-
-This project evolved through multiple labs, each adding sophisticated features:
-
-### 🏆 Lab 6 - Flask Backend & Deployment
-- **Flask REST API** with GET/POST/DELETE endpoints
-- **Dual-Persistence System** - Local + Server storage
-- **Selective Deletion** - Independent management of storage systems
-- **PythonAnywhere deployment** - Live production hosting
-- **Professional backend architecture**
-
-### 🔧 Lab 5 - Python & JSON Integration
-- **Python script** for JSON file management
-- **Data export system** - Complete backup functionality
-- **Reflection counter** - Live entry statistics
-- **Multi-platform compatibility** - GitHub Pages + Local
-
-```
 ##Learning-journal-PWA/
 │
 ├── flask_app.py              # 🐍 Main Flask Server (Entry Point)
@@ -110,6 +87,27 @@ This project evolved through multiple labs, each adding sophisticated features:
     └── backend/
         └── reflections.json  # 💾 JSON Database (Server-side storage)
 ```
+
+
+
+
+## 🎓 Learning Journey
+
+This project evolved through multiple labs, each adding sophisticated features:
+
+### 🏆 Lab 6 - Flask Backend & Deployment
+- **Flask REST API** with GET/POST/DELETE endpoints
+- **Dual-Persistence System** - Local + Server storage
+- **Selective Deletion** - Independent management of storage systems
+- **PythonAnywhere deployment** - Live production hosting
+- **Professional backend architecture**
+
+### 🔧 Lab 5 - Python & JSON Integration
+- **Python script** for JSON file management
+- **Data export system** - Complete backup functionality
+- **Reflection counter** - Live entry statistics
+- **Multi-platform compatibility** - GitHub Pages + Local
+
 
 # 🌐 Lab 4 - API Integration
 - **Local Storage API** - Persistent client-side storage

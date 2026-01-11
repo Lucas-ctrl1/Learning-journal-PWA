@@ -3,37 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me - My Learning Journal</title>
-    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <title>About Me - Lucas Shrestha</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
     <div class="container">
-        <h1>About Me</h1>
+        <header class="hero">
+            <div class="profile-avatar">👤</div>
+            <h1>About Me</h1>
+            <p class="subtitle">Lucas Shrestha • Student ID: 2317991</p>
+        </header>
 
-        <div class="profile">
-            <div class="profile-image">
-                <div class="placeholder-image">👨‍💻</div>
-            </div>
-            <div class="profile-info">
-                <h2>Lucas Shrestha</h2>
-                <p class="student-id">Student ID: 2317991</p>
-                <p>Passionate about mobile development, creative technology, and building solutions that make a difference. Currently exploring the world of Progressive Web Apps and frontend development.</p>
-
-                <div class="skills">
-                    <h3>Skills & Interests</h3>
-                    <ul>
-                        <li>HTML5 & CSS3</li>
-                        <li>JavaScript</li>
-                        <li>Mobile-First Design</li>
-                        <li>Progressive Web Apps</li>
-                        <li>Creative Computing</li>
-                    </ul>
+        <div class="about-grid">
+            <section class="profile">
+                <h2>Personal Profile</h2>
+                <div class="entry-content">
+                    <p>I am a student currently studying <strong>Mobile Development</strong>. This project represents my journey in building a Progressive Web App (PWA) using a Flask backend and modern frontend techniques.</p>
+                    <p>My goal is to create high-performance web applications that provide a native-app experience, including offline capabilities and smooth transitions.</p>
                 </div>
-            </div>
+            </section>
+
+            <section class="profile">
+                <h2>Technical Skills</h2>
+                <p class="entry-date">Core Technologies Used in Lab 7:</p>
+                <div class="skills-container">
+                    <span class="skill-chip">HTML5 & CSS3</span>
+                    <span class="skill-chip">JavaScript (ES6+)</span>
+                    <span class="skill-chip">Flask (Python)</span>
+                    <span class="skill-chip">PWA Architecture</span>
+                    <span class="skill-chip">Service Workers</span>
+                    <span class="skill-chip">Local Storage API</span>
+                    <span class="skill-chip">JSON Data Handling</span>
+                </div>
+            </section>
         </div>
+
+        <section class="journal-entry">
+            <h2>Academic Context</h2>
+            <div class="entry-content">
+                <p>This application was developed as part of the <strong>Mobile Development Lab Series (Lab 1–7)</strong>. It demonstrates the evolution from a static site to a fully functional, offline-capable journal and gaming platform.</p>
+            </div>
+        </section>
     </div>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

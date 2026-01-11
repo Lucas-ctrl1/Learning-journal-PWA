@@ -5,40 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Learning Journal - Home</title>
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
-    <!-- CSS LINK UPDATED FOR FLASK -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
-        <div class="container">
+    <div class="container">
         <header class="hero">
-            <h1>Welcome to My Learning Journey </h1>
-<p id="live-date" style="text-align: center; color: #666; margin: 1rem 0;"></p>
-            <p>This is my Progressive Web App that documents my growth through Mobile Application Development.</p>
+            <h1>Welcome Back! 👋</h1>
+            <p id="live-date" style="text-align: center; color: #666; margin: 0.5rem 0; font-weight: bold;"></p>
+            <p class="subtitle">Your Mobile Development learning journey at a glance.</p>
         </header>
 
+        <section class="stats-dashboard">
+            <div class="stat-item">
+                <span class="stat-icon">📓</span>
+                <div class="stat-info">
+                    <span class="stat-value" id="home-reflection-count">0</span>
+                    <span class="stat-label">Total Entries</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🐍</span>
+                <div class="stat-info">
+                    <span class="stat-value" id="home-high-score">0</span>
+                    <span class="stat-label">Best Score</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🚀</span>
+                <div class="stat-info">
+                    <span class="stat-value">Lab 7</span>
+                    <span class="stat-label">PWA Status: Online</span>
+                </div>
+            </div>
+        </section>
+
         <section class="quick-links">
-            <h2>Explore My Site</h2>
+            <h2>Explore Your Hub</h2>
             <div class="link-grid">
-                <!-- LINKS FIXED TO USE FLASK ROUTES -->
-                <a href="/about" class="link-card">
-                    <h3>About Me</h3>
-                    <p>Get to know who I am</p>
-                </a>
                 <a href="/journal" class="link-card">
+                    <div class="card-icon">✍️</div>
                     <h3>Learning Journal</h3>
-                    <p>Follow my weekly progress</p>
+                    <p>Document your weekly progress and technical reflections.</p>
                 </a>
                 <a href="/projects" class="link-card">
-                    <h3>Projects</h3>
-                    <p>See my work portfolio</p>
+                    <div class="card-icon">💻</div>
+                    <h3>My Projects</h3>
+                    <p>View the full portfolio of mobile-first web solutions.</p>
+                </a>
+                <a href="/about" class="link-card">
+                    <div class="card-icon">👤</div>
+                    <h3>Profile</h3>
+                    <p>Lucas Shrestha • Student ID: 2317991</p>
+                </a>
+                <a href="/game" class="link-card">
+                    <div class="card-icon">🎮</div>
+                    <h3>Snake Game</h3>
+                    <p>Take a study break and try to beat your high score!</p>
                 </a>
             </div>
         </section>
+
+        <section class="journal-entry" id="recent-preview-section" style="display: none; border-top: 4px solid #3498db;">
+            <h3>📝 Latest Reflection</h3>
+            <p id="recent-preview-text" style="font-style: italic; color: #555;"></p>
+            <a href="/journal" style="color: #3498db; font-weight: bold; text-decoration: none;">Read more →</a>
+        </section>
     </div>
-<!-- JAVASCRIPT LINK UPDATED FOR FLASK -->
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Load Snake High Score
+            const highScore = localStorage.getItem("snakeHighScore") || 0;
+            const highScoreDisplay = document.getElementById('home-high-score');
+            if (highScoreDisplay) highScoreDisplay.innerText = highScore;
+
+            // 2. Load Journal Stats & Preview
+            const entries = JSON.parse(localStorage.getItem("learningJournalEntries") || "[]");
+            const entryCountDisplay = document.getElementById('home-reflection-count');
+            if (entryCountDisplay) entryCountDisplay.innerText = entries.length;
+
+            // 3. Show a preview of the latest local entry
+            if (entries.length > 0) {
+                const previewSection = document.getElementById('recent-preview-section');
+                const previewText = document.getElementById('recent-preview-text');
+                previewSection.style.display = 'block';
+                // Trim content to 100 characters for beauty
+                const content = entries[0].content || entries[0].reflection;
+                previewText.innerText = `"${content.substring(0, 100)}..."`;
+            }
+        });
+    </script>
 </body>
 </html>
-
-

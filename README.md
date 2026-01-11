@@ -1,10 +1,10 @@
-# 📱 Learning Journal PWA
+# 📱 Learning Journal & Retro Game PWA
 
-A beautiful, full-featured Progressive Web App for documenting your learning journey through Mobile Application Development. Built with Flask backend and modern web technologies.
+A beautiful, full-featured Progressive Web App for documenting your learning journey through Mobile Application Development. Built with a **Flask backend**, **HTML5 Canvas**, and modern web technologies.
 
 ![PWA](https://img.shields.io/badge/PWA-Enabled-brightgreen)
 ![Flask](https://img.shields.io/badge/Backend-Flask-blue)
-![PythonAnywhere](https://img.shields.io/badge/Deployed-PythonAnywhere-orange)
+![Snake](https://img.shields.io/badge/Game-Snake--Canvas-red)
 ![Responsive](https://img.shields.io/badge/Design-Responsive-success)
 
 ## ✨ Features
@@ -19,7 +19,8 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 ### 🔥 Advanced Features
 - **⚡ Progressive Web App** - Installable and works offline
 - **🔗 RESTful API** - Full CRUD operations with Flask
-- **📊 Reflection Counter** - Live statistics of your entries
+- **📊 Synchronized Dashboard** - Real-time statistics aggregating entries from server and local storage
+- **🎮 Retro Snake Game** - Canvas-based mini-project with touch controls and high-score sync
 - **🗑️ Selective Deletion** - Manage local vs server entries independently
 - **📥 Data Export** - Download all entries as JSON
 - **🎬 YouTube Integration** - Embedded programming videos
@@ -31,19 +32,19 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 | Platform | URL | Status |
 |----------|-----|---------|
 | **PythonAnywhere** (Flask Backend) | [https://lucas221.pythonanywhere.com](https://lucas221.pythonanywhere.com) | ✅ **Live** |
-| **GitHub Pages** (Static Version) | https://github.com/Lucas-ctrl1/Learning-journal-PWA) | ✅ **Live** |
+| **GitHub Pages** (Static Version) | [https://github.com/Lucas-ctrl1/Learning-journal-PWA](https://github.com/Lucas-ctrl1/Learning-journal-PWA) | ✅ **Live** |
 
-##  Technology Stack
+## 🛠️ Technology Stack
 
 ### Frontend
-- **HTML5** - Semantic markup
-- **CSS3** - Flexbox, Grid, animations
-- **JavaScript ES6+** - Modern JavaScript features
-- **PWA** - Service Worker, Web App Manifest
+- **HTML5** - Semantic markup & Canvas API
+- **CSS3** - Glassmorphism, Flexbox, Grid, Animations
+- **JavaScript ES6+** - Modern Logic, Service Workers, Fetch API
+- **PWA** - Web App Manifest, Cache API
 
 ### Backend
 - **Python Flask** - REST API server
-- **JSON** - Data persistence
+- **JSON** - Server-side data persistence
 - **PythonAnywhere** - Production hosting
 
 ### APIs Integrated
@@ -51,43 +52,44 @@ A beautiful, full-featured Progressive Web App for documenting your learning jou
 - **Third-Party APIs**: YouTube Data API
 
 ## 📁 Project Structure
-```
 
-##Learning-journal-PWA/
+```text
+Learning-journal-PWA/
 │
 ├── flask_app.py              # 🐍 Main Flask Server (Entry Point)
 ├── README.md                 # Project Documentation
 │
 ├── templates/                # 📄 HTML Templates (Rendered by Flask)
-│   ├── index.html            # Home Page
-│   ├── journal.html          # Journal Page (main app logic)
-│   ├── projects.html         # Portfolio Page
-│   └── about.html            # Profile Page
+│   ├── index.html            # Home Page (Live Dashboard)
+│   ├── journal.html          # Journal Page (Main App Logic)
+│   ├── projects.html         # Portfolio Grid
+│   ├── about.html            # Profile & Skills
+│   └── game.html             # 🎮 Retro Snake Game Page
 │
-└── static/                   # 🎨 Static Assets (Served to Browser)
+└── static/                   # 🎨 Static Assets
     │
     ├── manifest.json         # 📱 PWA Manifest (App Metadata)
     │
     ├── css/
-    │   └── style.css         # Main Stylesheet (with Dark Mode & Offline styles)
+    │   └── style.css         # Main Stylesheet (Glassmorphism & Dark Mode)
     │
     ├── js/
     │   ├── service-worker.js # ⚙️ Service Worker (Cache & Offline Logic)
-    │   ├── script.js         # Main UI Logic (Nav, Toast, Heartbeat)
+    │   ├── script.js         # Main UI Logic (Dashboard Sync, Heartbeat)
     │   ├── journal-app.js    # Journal Entry Logic (Fetch & DOM)
+    │   ├── snake.js          # 🎮 Canvas Game Logic
     │   ├── storage.js        # Local Storage Helper
-    │   ├── browser.js        # Notification/Clipboard Helper
-    │   └── thirdparty.js     # YouTube API Helper
+    │   ├── browser.js        # Browser API Utilities
+    │   └── thirdparty.js     # YouTube API Integration
     │
     ├── images/
-    │   ├── icon-192.jpg      # 🖼️ Mobile Icon (Small)
-    │   └── icon-512.png      # 🖼️ Desktop Icon (Large)
+    │   ├── icon-192.jpg      # Mobile Icon
+    │   └── icon-512.png      # Desktop Icon
     │
     └── backend/
         └── reflections.json  # 💾 JSON Database (Server-side storage)
+
 ```
-
-
 
 
 ## 🎓 Learning Journey
@@ -206,3 +208,4 @@ Student ID: 2317991
 📄 License
 
 This project is part of academic coursework for Mobile Application Development.
+

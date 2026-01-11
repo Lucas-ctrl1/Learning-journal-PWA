@@ -95,7 +95,14 @@ def service_worker():
     # This looks for the file in 'static/js/service-worker.js'
     return app.send_static_file('js/service-worker.js')
 
+    # 9. Game Route (Interactive Local Feature)
+@app.route("/game")
+def game():
+    return render_template("game.html")
+
+
 # --- STARTUP CODE (Required for local testing) ---
 if __name__ == '__main__':
     # This allows you to run 'python flask_app.py' locally
     app.run(debug=True, port=5000)
+    

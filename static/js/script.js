@@ -1,104 +1,85 @@
-// ===== REUSABLE NAVIGATION =====
+/**
+ * script.js - Final Robust Version for Lab 7
+ * Handles: Navigation, Dashboard Sync (Server + Local),
+ * Dark Mode, Scroll Progress, and Offline Heartbeat.
+ */
+
+// ===== 1. NAVIGATION & PROGRESS BAR =====
 function loadNavigation() {
-    // Prevent duplicate navigation bars
     if (document.querySelector('nav')) return;
 
     const navHTML = `
+    <div id="scroll-progress-container" style="position: fixed; top: 0; width: 100%; height: 4px; background: transparent; z-index: 10001;">
+        <div id="scroll-progress-bar" style="height: 100%; background: #3498db; width: 0%; transition: width 0.1s ease; box-shadow: 0 0 10px #3498db;"></div>
+    </div>
     <nav>
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
             <li><a href="/journal">Journal</a></li>
             <li><a href="/projects">Projects</a></li>
+            <li><a href="/game">Snake</a></li>
         </ul>
         <button id="dark-mode-toggle">🌙 Dark Mode</button>
     </nav>`;
 
-    // Insert at the top of the body
     document.body.insertAdjacentHTML('afterbegin', navHTML);
 }
 
-// ===== UTILITY: Show Toast Notification (Built-in) =====
-// This ensures notifications work on ALL pages without needing extra files
-function showToast(title, message, color = '#27ae60') {
-    // Remove existing toast if any
-    const existingToast = document.getElementById('offline-toast');
-    if (existingToast) existingToast.remove();
+// ===== 2. DYNAMIC HOME DASHBOARD (Dynamic Sync) =====
+/**
+ * Fetches real entries from reflections.json and local storage.
+ * Displays the absolute latest entry from either source as the preview.
+ */
+async function initHomeDashboard() {
+    // 1. Get dynamic local entries
+    const localData = localStorage.getItem("learningJournalEntries");
+    const localEntries = localData ? JSON.parse(localData) : [];
+    const highScore = localStorage.getItem("snakeHighScore") || 0;
 
-    const toast = document.createElement('div');
-    toast.id = 'offline-toast';
-    toast.style.cssText = `
-        position: fixed;
-        top: 80px;
-        right: 20px;
-        background: ${color};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        z-index: 10000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        animation: fadeIn 0.5s;
-    `;
-
-    toast.innerHTML = `<strong>${title}</strong><br>${message}`;
-    document.body.appendChild(toast);
-
-    // Auto remove after 4 seconds
-    setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 500);
-    }, 4000);
-}
-
-// ===== LAB 7: ROBUST OFFLINE DETECTION (With Heartbeat) =====
-function initNetworkStatus() {
-    const container = document.querySelector('.container');
-
-    // 1. Core Logic to Toggle UI
-    function setOfflineMode(isOffline) {
-        // Prevent unnecessary UI updates if state hasn't changed
-        // This stops the notification from popping up every 3 seconds if nothing changed
-        const currentStatus = container && container.classList.contains('offline-mode');
-        if (isOffline === currentStatus) return;
-
-        if (isOffline) {
-            console.log("⚠️ Application is Offline");
-            // Add Grayscale Effect
-            if (container) container.classList.add('offline-mode');
-            // Show Red Notification
-            showToast('⚠️ You are Offline', 'Viewing cached version.', '#e74c3c');
-        } else {
-            console.log("✅ Application is Online");
-            // Remove Grayscale Effect
-            if (container) container.classList.remove('offline-mode');
-            // Show Green Notification
-            showToast('✅ Back Online', 'Connection restored.', '#27ae60');
+    // 2. Fetch server-side reflections (from reflections.json)
+    let serverEntries = [];
+    try {
+        const response = await fetch("/api/reflections");
+        if (response.ok) {
+            serverEntries = await response.json();
         }
+    } catch (error) {
+        console.warn("Dashboard server fetch failed.");
     }
 
-    // 2. Check immediately on load
-    if (!navigator.onLine) {
-        setOfflineMode(true);
+    // 3. Target homepage elements
+    const highScoreDisplay = document.getElementById('home-high-score');
+    const entryCountDisplay = document.getElementById('home-reflection-count');
+    const previewSection = document.getElementById('recent-preview-section');
+    const previewText = document.getElementById('recent-preview-text');
+
+    // 4. Update the Numbers: Server + Local
+    if (highScoreDisplay) highScoreDisplay.innerText = highScore;
+    if (entryCountDisplay) {
+        entryCountDisplay.innerText = serverEntries.length + localEntries.length;
     }
 
-    // 3. Listen for Event Changes (The Standard Way)
-    window.addEventListener('offline', () => setOfflineMode(true));
-    window.addEventListener('online', () => setOfflineMode(false));
+    // 5. Populate Preview with the ACTUAL latest entry
+    if (previewSection && previewText) {
+        previewSection.style.display = 'block';
 
-    // 4. THE HEARTBEAT FIX (The "Glitch" Killer)
-    // Checks connection every 3 seconds just in case the browser "forgot" to tell us.
-    setInterval(() => {
-        if (navigator.onLine) {
-            setOfflineMode(false);
+        if (localEntries.length > 0) {
+            // Prioritize newest local entry if it exists
+            const latestLocal = localEntries[0].content || localEntries[0].reflection;
+            previewText.innerText = `"${latestLocal.substring(0, 120)}..."`;
+        } else if (serverEntries.length > 0) {
+            // Fallback: Use the very last entry in your reflections.json
+            const latestServer = serverEntries[serverEntries.length - 1];
+            const content = latestServer.reflection || latestServer.content || "No content found";
+            previewText.innerText = `"${content.substring(0, 120)}..."`;
         } else {
-            setOfflineMode(true);
+            previewText.innerText = "Start your learning journey by adding your first reflection!";
         }
-    }, 3000);
+    }
 }
 
-// ===== STANDARD FEATURES =====
+// ===== 3. UI UTILITIES & DARK MODE =====
 function updateLiveDate() {
     const el = document.getElementById('live-date');
     if (el) el.innerText = new Date().toLocaleString();
@@ -111,50 +92,67 @@ function initDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         });
-
-        // Load saved preference
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
         }
     }
 }
 
-// ===== LAB 7: SERVICE WORKER REGISTRATION =====
-function registerServiceWorker() {
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('✅ SW Registered'))
-                .catch(err => console.log('❌ SW Failed', err));
-        });
+// Scroll progress bar logic
+window.addEventListener('scroll', () => {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    const scrollBar = document.getElementById("scroll-progress-bar");
+    if (scrollBar) {
+        scrollBar.style.width = scrolled + "%";
     }
-}
+});
 
 function highlightActivePage() {
-    // Get current path, ensuring homepage '/' is handled correctly
     let path = window.location.pathname.replace(/\/$/, '') || '/';
-
     document.querySelectorAll('nav a').forEach(link => {
         const href = link.getAttribute('href');
-        // Match path or handle index cases
         if (href === path || (path === '/' && href === '/')) {
-            link.style.background = '#34495e';
-            link.style.fontWeight = 'bold';
+            link.classList.add('active-nav');
         }
     });
 }
 
-// ===== INITIALIZE ALL =====
+// ===== 4. LAB 7: OFFLINE HEARTBEAT =====
+function initNetworkStatus() {
+    const container = document.querySelector('.container');
+    function updateStatus() {
+        if (!navigator.onLine) {
+            if (container) container.classList.add('offline-mode');
+        } else {
+            if (container) container.classList.remove('offline-mode');
+        }
+    }
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    setInterval(updateStatus, 3000);
+}
+
+// ===== 5. SERVICE WORKER REGISTRATION =====
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(reg => console.log('✅ Service Worker Active'))
+                .catch(err => console.log('❌ SW Registration Failed', err));
+        });
+    }
+}
+
+// ===== 6. INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Initializing App...');
     loadNavigation();
     highlightActivePage();
     updateLiveDate();
     initDarkMode();
-
-    registerServiceWorker(); // Lab 7 Requirement
-    initNetworkStatus();     // Lab 7 Extra Feature
-
-    // Update date every second
+    initHomeDashboard(); // Fetches real server data for count and preview
+    registerServiceWorker();
+    initNetworkStatus();
     setInterval(updateLiveDate, 1000);
 });

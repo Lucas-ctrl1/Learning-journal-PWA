@@ -1,15 +1,17 @@
-const CACHE_NAME = 'journal-pwa-v6';
+const CACHE_NAME = 'journal-pwa-v19';
 const STATIC_ASSETS = [
     '/',
     '/journal',
     '/about',
     '/projects',
+    '/game', // Added the new local game route
     '/static/css/style.css',
     '/static/js/script.js',
     '/static/js/journal-app.js',
     '/static/js/storage.js',
     '/static/js/browser.js',
     '/static/js/thirdparty.js',
+    '/static/js/snake.js', // Added the new snake game logic file
     '/static/images/icon-192.jpg', //  FIXED: Now matches your actual file
     '/static/images/icon-512.png'
 ];

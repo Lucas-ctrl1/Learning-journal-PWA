@@ -56,6 +56,50 @@
                 </div>
         </div>
 
+       <article class="journal-entry python-entry">
+    <h2>Final Week: Mini Project Reflection</h2>
+    <p class="entry-date">January 2026</p>
+
+    <section class="entry-content">
+        <h3>1. Additional Features Added to the Learning Journal</h3>
+        <p>
+            For the final week, I focused on transforming the Learning Journal from a static repository into a <strong>Robust Progressive Web Application (PWA)</strong>. The primary addition was a dynamic <strong>Home Dashboard</strong> that synchronizes data across the entire platform. This dashboard uses a combination of <code>fetch</code> requests to my Flask backend and <code>localStorage</code> queries to display a live count of reflections and the user's Snake high score.
+        </p>
+        <p>
+            Visually, I implemented a <strong>Glassmorphism</strong> design language and a <strong>Scroll Progress Indicator</strong> to provide high-end user feedback. I also added a "Recent Activity" preview on the homepage, which automatically pulls the actual text from my <code>reflections.json</code> file or local storage. To ensure reliability, I built an <strong>Offline Heartbeat Monitor</strong> that triggers a visual grayscale mode when the connection is lost, notifying the user via custom toast notifications.
+        </p>
+        <code>
+// Example of the dynamic counter logic
+entryCountDisplay.innerText = serverEntries.length + localEntries.length;
+        </code>
+
+        <h3>2. Choice of Mini Project: The Snake Game</h3>
+        <p>
+            I chose the <strong>Snake Game</strong> as my mini-project because it represents a perfect intersection between state management and interactive mobile design. In a PWA context, a game serves as a "study break" feature that encourages user retention. Technically, it allowed me to demonstrate proficiency in the <strong>HTML5 Canvas API</strong> and complex JavaScript logic for collision detection and coordinate tracking.
+        </p>
+        <p>
+            Furthermore, the Snake game provided an excellent opportunity to implement <strong>Mobile-First Interaction</strong>. By building a custom on-screen D-Pad and using <code>touch-action: manipulation</code>, I ensured the game was playable on smartphones without keyboard input. Choosing a project that generates data (scores) also allowed me to test <strong>Cross-Page Data Persistence</strong>, where the high score achieved on the <code>/game</code> page is instantly reflected on the <code>/</code> dashboard.
+        </p>
+
+        <h3>3. Technical Challenges and Solutions</h3>
+        <p>
+            One of the most significant challenges was a visual bug where <strong>dashboard icons became oversized</strong> and "basic" on mobile devices, as seen in my progress screenshots. The icons expanded to fill the entire container, breaking the layout. I solved this by implementing a <code>.stat-icon-wrapper</code> in CSS, which strictly controlled the <code>font-size</code> and <code>line-height</code> of the emojis regardless of the container's flex behavior.
+        </p>
+        <p>
+            Another challenge was <strong>asynchronous data synchronization</strong>. The homepage would often load "0" entries because the script finished before the Flask API returned the server-side reflections. I solved this by converting the dashboard initialization into an <code>async</code> function using <code>await fetch()</code>, ensuring the total count (Server Reflections + Local Entries) was calculated correctly before being displayed to the user. Finally, managing the <strong>Service Worker cache</strong> required strict versioning (v1–v25) to ensure that CSS updates were immediately visible on mobile devices.
+        </p>
+
+        <h3>4. Future Improvements</h3>
+        <p>
+            If given more time, I would focus on expanding the <strong>Backend Architecture</strong>. While the current Flask system handles reflections well, I would implement a full <strong>User Authentication System</strong> using <code>Flask-Login</code>. This would allow different users to have personalized journals and global leaderboards for the Snake game, moving data storage from <code>reflections.json</code> to a robust <strong>SQL database</strong> like PostgreSQL.
+        </p>
+        <p>
+            I would also improve the <strong>Search and Discovery</strong> features. Adding a global search bar that filters through both server-side and local storage entries using a <code>fuzzy search</code> algorithm would significantly improve usability as the journal grows. Lastly, I would enhance the <strong>Game Mechanics</strong> by adding multiple levels, varying speeds, and "power-up" items that could temporarily change the snake's behavior, further demonstrating the capabilities of the Canvas API within a PWA.
+        </p>
+    </section>
+       </article>
+       
+
         <article class="journal-entry">
     <h2>Week 7 - PWA & Offline Capabilities</h2>
 

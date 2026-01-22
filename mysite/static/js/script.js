@@ -1,8 +1,4 @@
-/**
- * script.js - Final Robust Version for Lab 7
- * Handles: Navigation, Dashboard Sync (Server + Local),
- * Dark Mode, Scroll Progress, and Offline Heartbeat.
- */
+
 
 // ===== 1. NAVIGATION & PROGRESS BAR =====
 function loadNavigation() {
@@ -13,6 +9,10 @@ function loadNavigation() {
         <div id="scroll-progress-bar" style="height: 100%; background: #3498db; width: 0%; transition: width 0.1s ease; box-shadow: 0 0 10px #3498db;"></div>
     </div>
     <nav>
+        <div class="status-indicator">
+            <span id="heartbeat-dot" class="status-dot pulse"></span>
+            <span id="status-text">Online</span>
+        </div>
         <ul>
             <li><a href="/">Home</a></li>
             <li><a href="/about">About</a></li>
@@ -27,17 +27,11 @@ function loadNavigation() {
 }
 
 // ===== 2. DYNAMIC HOME DASHBOARD (Dynamic Sync) =====
-/**
- * Fetches real entries from reflections.json and local storage.
- * Displays the absolute latest entry from either source as the preview.
- */
 async function initHomeDashboard() {
-    // 1. Get dynamic local entries
     const localData = localStorage.getItem("learningJournalEntries");
     const localEntries = localData ? JSON.parse(localData) : [];
     const highScore = localStorage.getItem("snakeHighScore") || 0;
 
-    // 2. Fetch server-side reflections (from reflections.json)
     let serverEntries = [];
     try {
         const response = await fetch("/api/reflections");
@@ -48,28 +42,22 @@ async function initHomeDashboard() {
         console.warn("Dashboard server fetch failed.");
     }
 
-    // 3. Target homepage elements
     const highScoreDisplay = document.getElementById('home-high-score');
     const entryCountDisplay = document.getElementById('home-reflection-count');
     const previewSection = document.getElementById('recent-preview-section');
     const previewText = document.getElementById('recent-preview-text');
 
-    // 4. Update the Numbers: Server + Local
     if (highScoreDisplay) highScoreDisplay.innerText = highScore;
     if (entryCountDisplay) {
         entryCountDisplay.innerText = serverEntries.length + localEntries.length;
     }
 
-    // 5. Populate Preview with the ACTUAL latest entry
     if (previewSection && previewText) {
         previewSection.style.display = 'block';
-
         if (localEntries.length > 0) {
-            // Prioritize newest local entry if it exists
             const latestLocal = localEntries[0].content || localEntries[0].reflection;
             previewText.innerText = `"${latestLocal.substring(0, 120)}..."`;
         } else if (serverEntries.length > 0) {
-            // Fallback: Use the very last entry in your reflections.json
             const latestServer = serverEntries[serverEntries.length - 1];
             const content = latestServer.reflection || latestServer.content || "No content found";
             previewText.innerText = `"${content.substring(0, 120)}..."`;
@@ -98,15 +86,12 @@ function initDarkMode() {
     }
 }
 
-// Scroll progress bar logic
 window.addEventListener('scroll', () => {
     const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrolled = (winScroll / height) * 100;
     const scrollBar = document.getElementById("scroll-progress-bar");
-    if (scrollBar) {
-        scrollBar.style.width = scrolled + "%";
-    }
+    if (scrollBar) scrollBar.style.width = scrolled + "%";
 });
 
 function highlightActivePage() {
@@ -119,19 +104,48 @@ function highlightActivePage() {
     });
 }
 
-// ===== 4. LAB 7: OFFLINE HEARTBEAT =====
-function initNetworkStatus() {
+// ===== 4. LAB 7: ENHANCED OFFLINE HEARTBEAT WITH VISUAL DOT =====
+async function initNetworkStatus() {
     const container = document.querySelector('.container');
-    function updateStatus() {
+    const dot = document.getElementById('heartbeat-dot');
+    const statusText = document.getElementById('status-text');
+
+    async function checkConnectivity() {
         if (!navigator.onLine) {
-            if (container) container.classList.add('offline-mode');
-        } else {
-            if (container) container.classList.remove('offline-mode');
+            setOfflineUI(true);
+            return;
+        }
+
+        try {
+            // "True Heartbeat" check
+            const response = await fetch("/api/reflections", { method: 'HEAD' });
+            setOfflineUI(!response.ok);
+        } catch (error) {
+            setOfflineUI(true);
         }
     }
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
-    setInterval(updateStatus, 3000);
+
+    function setOfflineUI(isOffline) {
+        if (isOffline) {
+            if (container) container.classList.add('offline-mode');
+            if (dot) {
+                dot.classList.add('dot-offline');
+                dot.classList.remove('pulse');
+            }
+            if (statusText) statusText.innerText = "Offline";
+        } else {
+            if (container) container.classList.remove('offline-mode');
+            if (dot) {
+                dot.classList.remove('dot-offline');
+                dot.classList.add('pulse');
+            }
+            if (statusText) statusText.innerText = "Online";
+        }
+    }
+
+    window.addEventListener('online', checkConnectivity);
+    window.addEventListener('offline', checkConnectivity);
+    setInterval(checkConnectivity, 5000); // Heartbeat interval
 }
 
 // ===== 5. SERVICE WORKER REGISTRATION =====
@@ -151,7 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     highlightActivePage();
     updateLiveDate();
     initDarkMode();
-    initHomeDashboard(); // Fetches real server data for count and preview
+    initHomeDashboard();
     registerServiceWorker();
     initNetworkStatus();
     setInterval(updateLiveDate, 1000);

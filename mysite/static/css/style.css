@@ -890,3 +890,46 @@ body.dark-mode .stat-label {
 }
 
 body.dark-mode .skill-chip { background: #3d3d3d; color: #fff; }
+/* --- Heartbeat Status Indicator --- */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: white;
+    margin-right: 15px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    background-color: #27ae60; /* Green for online */
+    border-radius: 50%;
+    margin-right: 8px;
+    transition: background-color 0.3s ease;
+}
+
+/* The Pulse Effect */
+.pulse {
+    animation: heartbeat-animation 2s infinite;
+}
+
+@keyframes heartbeat-animation {
+    0% { box-shadow: 0 0 0 0px rgba(39, 174, 96, 0.7); }
+    100% { box-shadow: 0 0 0 8px rgba(39, 174, 96, 0); }
+}
+
+/* Offline State for Dot */
+.dot-offline {
+    background-color: #e74c3c !important; /* Red for offline */
+    animation: none !important;
+    box-shadow: none !important;
+}
+
+/* Ensure container grayscale works as intended for Lab 7 */
+.container.offline-mode {
+    filter: grayscale(100%) !important;
+    pointer-events: none; /* Optional: prevent interactions while offline */
+    opacity: 0.8;
+}
+
+

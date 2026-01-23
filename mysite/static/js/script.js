@@ -1,17 +1,63 @@
 
+// 1. GLOBAL STATE - Check hardware status immediately before anything else runs
+let isCurrentlyOffline = !navigator.onLine;
 
-// ===== 1. NAVIGATION & PROGRESS BAR =====
+// ===== 1. LAB 7: ENHANCED INSTANT OFFLINE HEARTBEAT =====
+
+async function checkConnectivity() {
+    const container = document.querySelector('.container');
+    const dot = document.getElementById('heartbeat-dot');
+    const statusText = document.getElementById('status-text');
+
+    // Immediate fail if hardware reports offline
+    if (!navigator.onLine) {
+        setOfflineUI(true, container, dot, statusText);
+        return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
+
+    try {
+        const response = await fetch("/api/reflections", {
+            method: 'HEAD',
+            signal: controller.signal,
+            cache: 'no-store' // Critical: forces browser to ignore SW cache
+        });
+        clearTimeout(timeoutId);
+        setOfflineUI(!response.ok, container, dot, statusText);
+    } catch (error) {
+        // If fetch is aborted or fails, we are offline
+        setOfflineUI(true, container, dot, statusText);
+    }
+}
+
+function setOfflineUI(isOffline, container, dot, statusText) {
+    isCurrentlyOffline = isOffline;
+    if (isOffline) {
+        if (container) container.classList.add('offline-mode');
+        if (dot) { dot.classList.add('dot-offline'); dot.classList.remove('pulse'); }
+        if (statusText) statusText.innerText = "Offline";
+    } else {
+        if (container) container.classList.remove('offline-mode');
+        if (dot) { dot.classList.remove('dot-offline'); dot.classList.add('pulse'); }
+        if (statusText) statusText.innerText = "Online";
+    }
+}
+
+// ===== 2. NAVIGATION & PROGRESS BAR =====
 function loadNavigation() {
     if (document.querySelector('nav')) return;
 
+    // Build nav with initial offline state if hardware already says so
     const navHTML = `
     <div id="scroll-progress-container" style="position: fixed; top: 0; width: 100%; height: 4px; background: transparent; z-index: 10001;">
         <div id="scroll-progress-bar" style="height: 100%; background: #3498db; width: 0%; transition: width 0.1s ease; box-shadow: 0 0 10px #3498db;"></div>
     </div>
     <nav>
         <div class="status-indicator">
-            <span id="heartbeat-dot" class="status-dot pulse"></span>
-            <span id="status-text">Online</span>
+            <span id="heartbeat-dot" class="status-dot ${isCurrentlyOffline ? 'dot-offline' : 'pulse'}"></span>
+            <span id="status-text">${isCurrentlyOffline ? 'Offline' : 'Online'}</span>
         </div>
         <ul>
             <li><a href="/">Home</a></li>
@@ -24,9 +70,15 @@ function loadNavigation() {
     </nav>`;
 
     document.body.insertAdjacentHTML('afterbegin', navHTML);
+
+    // Apply grayscale immediately if global state is offline
+    if (isCurrentlyOffline) {
+        const container = document.querySelector('.container');
+        if (container) container.classList.add('offline-mode');
+    }
 }
 
-// ===== 2. DYNAMIC HOME DASHBOARD (Dynamic Sync) =====
+// ===== 3. DYNAMIC HOME DASHBOARD =====
 async function initHomeDashboard() {
     const localData = localStorage.getItem("learningJournalEntries");
     const localEntries = localData ? JSON.parse(localData) : [];
@@ -34,12 +86,10 @@ async function initHomeDashboard() {
 
     let serverEntries = [];
     try {
-        const response = await fetch("/api/reflections");
-        if (response.ok) {
-            serverEntries = await response.json();
-        }
+        const response = await fetch("/api/reflections", { cache: 'no-store' });
+        if (response.ok) serverEntries = await response.json();
     } catch (error) {
-        console.warn("Dashboard server fetch failed.");
+        console.warn("Dashboard sync deferred - offline.");
     }
 
     const highScoreDisplay = document.getElementById('home-high-score');
@@ -48,26 +98,21 @@ async function initHomeDashboard() {
     const previewText = document.getElementById('recent-preview-text');
 
     if (highScoreDisplay) highScoreDisplay.innerText = highScore;
-    if (entryCountDisplay) {
-        entryCountDisplay.innerText = serverEntries.length + localEntries.length;
-    }
+    if (entryCountDisplay) entryCountDisplay.innerText = serverEntries.length + localEntries.length;
 
     if (previewSection && previewText) {
         previewSection.style.display = 'block';
         if (localEntries.length > 0) {
             const latestLocal = localEntries[0].content || localEntries[0].reflection;
-            previewText.innerText = `"${latestLocal.substring(0, 120)}..."`;
+            previewText.innerText = '"' + latestLocal.substring(0, 120) + '..."';
         } else if (serverEntries.length > 0) {
             const latestServer = serverEntries[serverEntries.length - 1];
-            const content = latestServer.reflection || latestServer.content || "No content found";
-            previewText.innerText = `"${content.substring(0, 120)}..."`;
-        } else {
-            previewText.innerText = "Start your learning journey by adding your first reflection!";
+            previewText.innerText = '"' + latestServer.reflection.substring(0, 120) + '..."';
         }
     }
 }
 
-// ===== 3. UI UTILITIES & DARK MODE =====
+// ===== 4. UI UTILITIES =====
 function updateLiveDate() {
     const el = document.getElementById('live-date');
     if (el) el.innerText = new Date().toLocaleString();
@@ -80,72 +125,15 @@ function initDarkMode() {
             document.body.classList.toggle('dark-mode');
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         });
-        if (localStorage.getItem('darkMode') === 'true') {
-            document.body.classList.add('dark-mode');
-        }
+        if (localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
     }
 }
-
-window.addEventListener('scroll', () => {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    const scrollBar = document.getElementById("scroll-progress-bar");
-    if (scrollBar) scrollBar.style.width = scrolled + "%";
-});
 
 function highlightActivePage() {
     let path = window.location.pathname.replace(/\/$/, '') || '/';
     document.querySelectorAll('nav a').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href === path || (path === '/' && href === '/')) {
-            link.classList.add('active-nav');
-        }
+        if (link.getAttribute('href') === path) link.classList.add('active-nav');
     });
-}
-
-// ===== 4. LAB 7: ENHANCED OFFLINE HEARTBEAT WITH VISUAL DOT =====
-async function initNetworkStatus() {
-    const container = document.querySelector('.container');
-    const dot = document.getElementById('heartbeat-dot');
-    const statusText = document.getElementById('status-text');
-
-    async function checkConnectivity() {
-        if (!navigator.onLine) {
-            setOfflineUI(true);
-            return;
-        }
-
-        try {
-            // "True Heartbeat" check
-            const response = await fetch("/api/reflections", { method: 'HEAD' });
-            setOfflineUI(!response.ok);
-        } catch (error) {
-            setOfflineUI(true);
-        }
-    }
-
-    function setOfflineUI(isOffline) {
-        if (isOffline) {
-            if (container) container.classList.add('offline-mode');
-            if (dot) {
-                dot.classList.add('dot-offline');
-                dot.classList.remove('pulse');
-            }
-            if (statusText) statusText.innerText = "Offline";
-        } else {
-            if (container) container.classList.remove('offline-mode');
-            if (dot) {
-                dot.classList.remove('dot-offline');
-                dot.classList.add('pulse');
-            }
-            if (statusText) statusText.innerText = "Online";
-        }
-    }
-
-    window.addEventListener('online', checkConnectivity);
-    window.addEventListener('offline', checkConnectivity);
-    setInterval(checkConnectivity, 5000); // Heartbeat interval
 }
 
 // ===== 5. SERVICE WORKER REGISTRATION =====
@@ -153,20 +141,30 @@ function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/service-worker.js')
-                .then(reg => console.log('✅ Service Worker Active'))
-                .catch(err => console.log('❌ SW Registration Failed', err));
+                .then(reg => console.log('✅ SW Active'))
+                .catch(err => console.log('❌ SW Failed', err));
         });
     }
 }
 
 // ===== 6. INITIALIZE =====
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Load Navigation with current offline state applied
     loadNavigation();
+
+    // 2. Perform Heartbeat immediately to update UI if status changed
+    checkConnectivity();
+
+    // 3. Other initializations
     highlightActivePage();
     updateLiveDate();
     initDarkMode();
     initHomeDashboard();
     registerServiceWorker();
-    initNetworkStatus();
+
+    // 4. Setup listeners & Heartbeat (3s interval)
+    window.addEventListener('online', checkConnectivity);
+    window.addEventListener('offline', checkConnectivity);
+    setInterval(checkConnectivity, 3000);
     setInterval(updateLiveDate, 1000);
 });

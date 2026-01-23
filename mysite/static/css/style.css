@@ -787,11 +787,14 @@ body.dark-mode #reflection-count {
     background: #ff5252;
 }
 /* === EXTRA FEATURE: Visual Offline Mode (Lab 7) === */
-/* Using !important to force the browser to apply it */
+/* Ensure container grayscale works as intended for Lab 7 */
 .container.offline-mode {
-        filter: grayscale(100%) !important;
-        transition: filter 0.5s ease;
+    filter: grayscale(100%) !important;
+    /* REMOVED pointer-events: none; to allow typing */
+    opacity: 0.8;
+    transition: filter 0.5s ease;
 }
+
 /* Animation for the Javascript Toast */
 @keyframes fadeIn {
         from { opacity: 0; transform: translateY(-20px); }

@@ -62,7 +62,7 @@ class JournalApp {
             const response = await fetch(`/api/reflections/${index}`, {
                 method: 'DELETE'
             });
-            
+
             if (response.ok) {
                 await this.loadEntries();
                 browserAPI.showNotification('Entry Deleted', 'Server entry has been removed');
@@ -129,10 +129,10 @@ class JournalApp {
         const jsonReflections = await this.fetchJsonReflections();
 
         const jsonEntries = jsonReflections.map((reflection, index) => {
-            const reflectionDate = new Date(reflection.date); 
+            const reflectionDate = new Date(reflection.date);
             return {
-                id: reflection.date, 
-                title: reflection.title || "Server Reflection Entry", 
+                id: reflection.date,
+                title: reflection.title || "Server Reflection Entry",
                 content: reflection.reflection,
                 date: reflectionDate.toLocaleDateString() + ' @ ' + reflectionDate.toLocaleTimeString(),
                 tags: ['flask', 'backend', 'live'],
@@ -168,7 +168,7 @@ class JournalApp {
             <p class="entry-content">${entry.content}</p>
             ${entry.tags?.length ? `<p class="entry-tags">Tags: ${entry.tags.join(', ')}</p>` : ''}
             <div class="entry-actions">
-                ${isLocalStorage ? 
+                ${isLocalStorage ?
                     `<button class="btn-copy" data-content="${this.formatContentForCopy(entry)}">Copy</button>
                      <button class="btn-delete" data-id="${entry.id}">Delete</button>` :
                     `<p class="python-label">Saved via Flask Backend</p>

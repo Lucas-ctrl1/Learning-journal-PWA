@@ -928,11 +928,5 @@ body.dark-mode .skill-chip { background: #3d3d3d; color: #fff; }
     box-shadow: none !important;
 }
 
-/* Ensure container grayscale works as intended for Lab 7 */
-.container.offline-mode {
-    filter: grayscale(100%) !important;
-    pointer-events: none; /* Optional: prevent interactions while offline */
-    opacity: 0.8;
-}
 
 

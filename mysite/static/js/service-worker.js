@@ -1,4 +1,4 @@
-const CACHE_NAME = 'journal-pwa-v22';
+const CACHE_NAME = 'journal-pwa-v23';
 const STATIC_ASSETS = [
     '/',
     '/journal',
